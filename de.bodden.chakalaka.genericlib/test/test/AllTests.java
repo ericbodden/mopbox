@@ -3,7 +3,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.bodden.rvlib.generic.IIndexingStrategy;
-import de.bodden.rvlib.generic.indexing.StrategyCPlus;
+import de.bodden.rvlib.generic.indexing.StrategyC;
 
  
 @RunWith(Suite.class)
@@ -15,7 +15,7 @@ import de.bodden.rvlib.generic.indexing.StrategyCPlus;
 })
 public class AllTests {
 	
-	@SuppressWarnings("unchecked")
-	public final static Class<? extends IIndexingStrategy> STRATEGY_CLASS = StrategyCPlus.class;
+	@SuppressWarnings("rawtypes")
+	public final static Class<? extends IIndexingStrategy> STRATEGY_CLASS = StrategyC.class;
 	
 }

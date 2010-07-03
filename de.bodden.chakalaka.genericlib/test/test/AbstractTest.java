@@ -19,6 +19,8 @@ public abstract class AbstractTest {
 	protected final Class<IIndexingStrategy<String,String,Object>> indexingStrategyClass;
 	protected final static IndexingStrategyFactory<String,String,Object> factory = new IndexingStrategyFactory<String,String,Object>();
 	protected AbstractFSMMonitorTestTemplate<String,String,Object> template;
+	
+	private long before;
 
 	public AbstractTest(Class<IIndexingStrategy<String,String,Object>> indexingStrategyClass) {
 		this.indexingStrategyClass = indexingStrategyClass;
@@ -32,12 +34,22 @@ public abstract class AbstractTest {
 	
 	protected abstract AbstractFSMMonitorTestTemplate<String,String,Object> makeTemplate();
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Parameters
 	public static Collection<Class<? extends IIndexingStrategy>[]> makeStrategies() {
 		Collection<Class<? extends IIndexingStrategy>[]> res =
 			new LinkedList<Class<? extends IIndexingStrategy>[]>();
 		res.add(new Class[]{StrategyB.class});
 		return res;
+	}
+	
+	protected void begin() {
+		before = System.currentTimeMillis();		
+	}
+
+	protected void end() {
+		long after = System.currentTimeMillis();
+		StackTraceElement[] stackTrace = new Exception().getStackTrace();
+		System.out.println(stackTrace[1].getMethodName()+" took "+(after-before));
 	}
 }

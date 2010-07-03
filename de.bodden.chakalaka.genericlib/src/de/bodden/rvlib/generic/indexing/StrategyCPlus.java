@@ -20,7 +20,9 @@ import de.bodden.rvlib.impl.VariableBinding;
  */
 public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
-	@SuppressWarnings("unchecked")
+	private final static boolean DEBUG = false; 
+	
+	@SuppressWarnings("rawtypes")
 	protected static final IVariableBinding EMPTY_BINDING = new VariableBinding();
 	
 	protected Map<IVariableBinding<K,V>,M> bindingToMonitor;
@@ -30,11 +32,15 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 
 	protected Set<ISymbol<L>> creationSymbols;
 	
-	@SuppressWarnings("unchecked")
 	public StrategyCPlus(IMonitorTemplate<M,L,K,V> template) {
+		if(DEBUG) {
+			System.err.println();
+			System.err.println();
+			System.err.println();
+		}
+
 		this.template = template;
 		bindingToMonitor = new HashMap<IVariableBinding<K,V>, M>();		
-		bindingToMonitor.put(EMPTY_BINDING, template.createMonitorPrototype());		
 		bindingToDefinedMoreInformativeBindings = new HashMap<IVariableBinding<K,V>, Set<IVariableBinding<K,V>>>();
 		creationSymbols = computeCreationSymbols(template);
 	}
@@ -80,9 +86,16 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 			new HashSet<IVariableBinding<K,V>>(definedMoreInformativeBindingsFor(currentVariableBinding));
 		union.add(currentVariableBinding); //line 16
 		for (IVariableBinding<K,V> bPrime : union) { //line 16
-			if(bindingToMonitor.get(bPrime).processEvent(currentEvent.getSymbol())) { //lines 17
+			M monitor = bindingToMonitor.get(bPrime);			
+			if(monitor!=null && monitor.processEvent(currentEvent.getSymbol())) { //lines 17
 				template.matchCompleted(bPrime); //lines 18
 			}
+		}
+		if(DEBUG) {
+			System.err.println(currentEvent);
+			System.err.println(bindingToMonitor);
+			System.err.println(bindingToDefinedMoreInformativeBindings);
+			System.err.println();
 		}
 	}
 

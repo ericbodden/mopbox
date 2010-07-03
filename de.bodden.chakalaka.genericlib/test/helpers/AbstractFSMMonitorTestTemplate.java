@@ -8,7 +8,7 @@ import de.bodden.rvlib.generic.indexing.IndexingStrategyFactory;
 
 public abstract class AbstractFSMMonitorTestTemplate<L,K,V> extends AbstractFSMMonitorTemplate<L,K,V> {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected final static IndexingStrategyFactory factory = new IndexingStrategyFactory();
 	protected String trace = "";
 	

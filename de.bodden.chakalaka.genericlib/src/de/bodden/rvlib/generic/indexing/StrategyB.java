@@ -21,7 +21,7 @@ import de.bodden.rvlib.impl.VariableBinding;
  */
 public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected static final IVariableBinding EMPTY_BINDING = new VariableBinding();
 	
 	private Map<IVariableBinding<K,V>,M> bindingToMonitor;

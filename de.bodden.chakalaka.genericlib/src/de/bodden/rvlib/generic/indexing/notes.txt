@@ -1,0 +1,9 @@
+Note on C+ algorithm:
+
+The use of creation events appears to be incorrect. The problem is that when creation events are used,
+one may incorrectly skip monitor-discarding events at the beginning of the trace.
+
+For instance, a trace "a b" over the property "b with no a before" would falsely be reduced to
+just "b", because "a" is not a creation event.
+
+But then I think that JavaMop requires you to tag creation events explicitly...

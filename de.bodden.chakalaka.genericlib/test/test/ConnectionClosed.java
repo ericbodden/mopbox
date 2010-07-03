@@ -68,4 +68,13 @@ public class ConnectionClosed extends AbstractTest {
 		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
 		Assert.assertEquals("{c=c2}{c=c1}", template.getTrace());
 	}
+
+//	@Test
+//	public void testWriteFirst() {
+//		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));
+//		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
+//		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
+//		Assert.assertEquals("", template.getTrace());
+//	}
+
 }
