@@ -9,14 +9,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
-import de.bodden.rvlib.generic.IIndexingStrategy;
 import de.bodden.rvlib.generic.def.Event;
 
 public class HasNext extends AbstractTest {
-
-	public HasNext(Class<IIndexingStrategy<String,String,Object>> indexingStrategyClass) {
-		super(indexingStrategyClass);
-	}
 
 	@Override
 	protected AbstractFSMMonitorTestTemplate<String,String,Object> makeTemplate() {

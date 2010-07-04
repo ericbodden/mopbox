@@ -8,7 +8,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
-import de.bodden.rvlib.generic.IIndexingStrategy;
 import de.bodden.rvlib.generic.IVariableBinding;
 import de.bodden.rvlib.generic.def.Event;
 import de.bodden.rvlib.impl.VariableBinding;
@@ -17,9 +16,7 @@ public class ConnectionClosed extends AbstractTest {
 
 	IVariableBinding<String,Object> v,v2;
 	
-	public ConnectionClosed(Class<IIndexingStrategy<String,String,Object>> indexingStrategyClass) {
-		super(indexingStrategyClass);
-
+	public ConnectionClosed() {
 		v = new VariableBinding<String,Object>();
 		v.put("c", new Object() {
 			@Override
