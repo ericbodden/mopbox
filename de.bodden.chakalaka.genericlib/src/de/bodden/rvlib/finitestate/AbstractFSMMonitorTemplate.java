@@ -15,13 +15,17 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 		return new State<L>(getAlphabet(),isFinal,Integer.toString(nextStateNum++));
 	}
 	
+	/**
+	 * In a FSM, a creation symbol is a symbol that from the initial state
+	 * either (a) leads to a non-initial state or (b) leads to no state at all,
+	 * i.e., prevents a match.  
+	 */
 	@Override
 	public Set<ISymbol<L>> computeCreationSymbols() {
-		;
 		Set<ISymbol<L>> creationSyms = new HashSet<ISymbol<L>>();
 		for(ISymbol<L> s: getAlphabet()) {
 			State<L> target = initialState().targetFor(s);
-			if(target!=null && !target.equals(initialState())){
+			if(target==null || !target.equals(initialState())){
 				creationSyms.add(s);
 			}
 		}
