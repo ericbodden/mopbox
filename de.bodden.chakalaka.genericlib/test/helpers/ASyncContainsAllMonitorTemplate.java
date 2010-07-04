@@ -14,7 +14,7 @@ public class ASyncContainsAllMonitorTemplate extends AbstractFSMMonitorTestTempl
 		return alphabet;
 	}
 
-	protected State<String> createAndWireInitialState() {
+	protected State<String> doCreateAndWireInitialState() {
 		State<String> initial = makeState(false);
 		State<String> synched1 = makeState(false);
 		State<String> synched2 = makeState(false);

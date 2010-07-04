@@ -16,7 +16,7 @@ public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<
 		return alphabet;
 	}
 	
-	protected State<String> createAndWireInitialState() {
+	protected State<String> doCreateAndWireInitialState() {
 		State<String> initial = makeState(false);
 		State<String> iterating = makeState(false);
 		State<String> updated = makeState(false);

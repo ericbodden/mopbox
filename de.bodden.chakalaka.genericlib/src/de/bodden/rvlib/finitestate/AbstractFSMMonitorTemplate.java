@@ -44,6 +44,11 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 		return initialState;
 	}
 	
-	protected abstract State<L> createAndWireInitialState();
+	protected final State<L> createAndWireInitialState() {
+		nextStateNum= 0;
+		return doCreateAndWireInitialState();
+	}
+
+	protected abstract State<L> doCreateAndWireInitialState();
 
 }

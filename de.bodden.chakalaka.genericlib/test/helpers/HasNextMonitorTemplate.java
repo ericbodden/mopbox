@@ -15,7 +15,7 @@ public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<Strin
 		return alphabet;
 	}
 	
-	protected State<String> createAndWireInitialState() {
+	protected State<String> doCreateAndWireInitialState() {
 		State<String> initial = makeState(false);
 		State<String> middle = makeState(false);
 		State<String> error = makeState(true);
