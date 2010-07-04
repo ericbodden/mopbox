@@ -2,22 +2,32 @@ package de.bodden.rvlib.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections15.map.AbstractReferenceMap;
+import org.apache.commons.collections15.map.ReferenceIdentityMap;
+
 import de.bodden.rvlib.generic.IVariableBinding;
 
 @SuppressWarnings("serial")
-public class VariableBinding<K,V> extends HashMap<K,V> implements IVariableBinding<K,V> {
+public class VariableBinding<K,V> extends ReferenceIdentityMap<K, V> implements IVariableBinding<K,V>, Cloneable {
 
 	public VariableBinding(Map<K,V> map) {
-		super(map);
+		//TODO want to use weak values here but the problem is that these maps are used as keys
+		//in other maps; hence need to update the parent maps!
+		super(AbstractReferenceMap.HARD,AbstractReferenceMap.HARD);
+		putAll(map);
 	}
 
 	public VariableBinding() {
+		//TODO want to use weak values here but the problem is that these maps are used as keys
+		//in other maps; hence need to update the parent maps!
+		super(AbstractReferenceMap.HARD,AbstractReferenceMap.HARD);
 	}
 
 	@Override
@@ -113,6 +123,26 @@ public class VariableBinding<K,V> extends HashMap<K,V> implements IVariableBindi
 	@SuppressWarnings("unchecked")
 	private VariableBinding<K,V> copy() {
 		return (VariableBinding<K,V>) clone();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("{");
+		List<K> keys = new ArrayList<K>(keySet());
+		Collections.sort(keys, new Comparator<K>() {
+			public int compare(K o1, K o2) {
+				return o1.toString().compareTo(o2.toString());
+			}
+		});
+		for (Iterator<K> iterator = keys.iterator(); iterator.hasNext();) {
+			K k = iterator.next();
+			sb.append(k);
+			sb.append("=");
+			sb.append(get(k));
+			if(iterator.hasNext()) sb.append(", ");
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 	
 }

@@ -20,7 +20,7 @@ import de.bodden.rvlib.impl.VariableBinding;
  */
 public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
-	private final static boolean DEBUG = false; 
+	private final static boolean DEBUG = true; 
 	
 	@SuppressWarnings("rawtypes")
 	protected static final IVariableBinding EMPTY_BINDING = new VariableBinding();

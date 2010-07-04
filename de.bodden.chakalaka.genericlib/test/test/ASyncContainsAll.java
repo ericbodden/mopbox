@@ -23,7 +23,7 @@ public class ASyncContainsAll extends AbstractTest {
 		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("sync"),new StringBasedBinding("c=c1")));
 		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("sync"),new StringBasedBinding("d=c2")));
 		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("containsAll"),new StringBasedBinding("c=c1,d=c2")));
-		Assert.assertEquals("{d=c2, c=c1}", template.getTrace());
+		Assert.assertEquals("{c=c1, d=c2}", template.getTrace());
 	}
 
 }
