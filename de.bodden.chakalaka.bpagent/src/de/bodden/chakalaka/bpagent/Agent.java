@@ -28,6 +28,6 @@ public class Agent {
 
 		Thread thread = new Thread(new IncomingConnectionListener());
 		thread.setDaemon(true);	//ok to shut down when thread is still listening
-		thread.start();
+		thread.start();	
 	}
 }

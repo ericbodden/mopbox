@@ -16,13 +16,17 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
+/**
+ * Inserts transitions in the classes to be monitored.
+ */
 public class TransitionInserter implements
 		ClassFileTransformer {
+	
+	IMonitorTemplateRegistry r;
+	
 	@Override
-	public byte[] transform(ClassLoader loader, final String className,
-			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-			byte[] classfileBuffer) throws IllegalClassFormatException {
-		if(!className.equals("Main")) return null;		
+	public byte[] transform(ClassLoader loader, final String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+		if(!r.needsMonitoring(className)) return null;		
 		
 	    try {
 	    	// scan class binary format to find fields for toString() method
@@ -34,20 +38,15 @@ public class TransitionInserter implements
 	        	public MethodVisitor visitMethod(int access, String methodName, String desc, String signature, String[] exceptions) {
 	        		//delegate
 	        		MethodVisitor mv = cv.visitMethod(access, methodName, desc, signature, exceptions);
-	        		if(!methodName.equals("main")) return mv;
 	        		
 	        		mv = new MethodAdapter(mv) {
-	        			
-	        			int i = 0;
-	        			public void visitInsn(int arg0) {
-	        				if(i==0) {
-	        					Label l = new Label();
-	        					mv.visitLabel(l);
-	        					mv.visitLineNumber(7, l);
+
+	        			public void visitLineNumber(int num, Label l) {
+	        				if(r.needsMonitoring(className,num)) {
+	        					System.out.println("Instrumenting line "+num+" of class "+className);
 	        				}
-	        				i++;
-	        				super.visitInsn(arg0);
-	        			}
+	        			};
+	        			
 	        		};
 
 	        		return mv;
