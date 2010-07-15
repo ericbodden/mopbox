@@ -1,13 +1,8 @@
 package de.bodden.chakalaka.bpagent;
 
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.Set;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
@@ -66,17 +61,17 @@ public class TransitionInserter implements
 	        	
 	        };
 	        creader.accept(visitor, 0);
-	        try {
-				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("Main.class"));
-				bos.write(writer.toByteArray());
-				bos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//	        try {
+//				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("Main.class"));
+//				bos.write(writer.toByteArray());
+//				bos.close();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 	        return writer.toByteArray();
 	    } catch (IllegalStateException e) {
 	        throw new IllegalClassFormatException("Error: " + e.getMessage() +
