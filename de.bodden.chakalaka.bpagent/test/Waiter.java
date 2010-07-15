@@ -7,7 +7,16 @@ public class Waiter {
 	 */
 	public static void main(String[] args) throws InterruptedException {
 		System.out.println("Sleeping...");
-		Thread.sleep(10000000);
+		while(true) {
+			foo();
+		}
+	}
+
+	private static void foo() throws InterruptedException {
+		System.out.print("");		
+		System.out.print("");		
+		System.out.print("");				
+		Thread.sleep(1000);
 	}
 
 }

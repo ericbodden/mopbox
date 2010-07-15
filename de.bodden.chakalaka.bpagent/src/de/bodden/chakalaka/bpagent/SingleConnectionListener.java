@@ -39,8 +39,8 @@ public class SingleConnectionListener implements Runnable {
 				}
 				for(Class<?> c: inst.getAllLoadedClasses()) {
 					if(inst.isModifiableClass(c) && classNames.contains(c.getName())) {
-						inst.retransformClasses(c);
 						System.out.println("Retransforming loaded class "+c.getName());
+						inst.retransformClasses(c);
 					}
 				}
 			}

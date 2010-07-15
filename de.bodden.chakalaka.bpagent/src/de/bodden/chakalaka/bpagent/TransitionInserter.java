@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.Set;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
@@ -15,6 +16,9 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
+import de.bodden.chakalaka.bpagent.IMonitorTemplateRegistry.SymbolAndTemplateNumber;
 
 /**
  * Inserts transitions in the classes to be monitored.
@@ -22,11 +26,9 @@ import org.objectweb.asm.MethodVisitor;
 public class TransitionInserter implements
 		ClassFileTransformer {
 	
-	IMonitorTemplateRegistry r;
-	
 	@Override
 	public byte[] transform(ClassLoader loader, final String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-		if(!r.needsMonitoring(className)) return null;				
+		if(!Registry.v().needsMonitoring(className)) return null;				
 		
 		try {
 	    	// scan class binary format to find fields for toString() method
@@ -41,11 +43,21 @@ public class TransitionInserter implements
 	        		
 	        		mv = new MethodAdapter(mv) {
 
+	        			public void visitMethodInsn(int arg0, String arg1, String arg2, String arg3) {
+	        				super.visitMethodInsn(arg0, arg1, arg2, arg3);	        				
+	        			}
+	        			
 	        			public void visitLineNumber(int num, Label l) {
-	        				if(r.needsMonitoring(className,num)) {
+	        				if(Registry.v().needsMonitoring(className,num)) {
 	        					System.out.println("Instrumenting line "+num+" of class "+className);
+	        					String name = Registry.class.getName().replace('.', '/');
+	        					for(SymbolAndTemplateNumber symAndNum: Registry.v().transitionInfos(className, num)) {
+	        						mv.visitLdcInsn(symAndNum.sym);
+	        						mv.visitLdcInsn(symAndNum.templateNumber);
+	        						mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "notify", "(Ljava/lang/String;I)V"); 
+	        					}
 	        				}
-	        			};
+	        			}
 	        			
 	        		};
 

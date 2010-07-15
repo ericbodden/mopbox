@@ -28,6 +28,7 @@
             <classpath>
                 <pathelement location="lib/asm-3.2.jar"/>
                 <pathelement location="lib/asm-commons-3.2.jar"/>
+                <pathelement location="lib/collections-generic-4.01.jar"/>
                 <pathelement location="../de.bodden.chakalaka.genericlib/rvlib.jar"/>
             </classpath>
         </javac>
@@ -45,6 +46,7 @@
             <fileset dir="bin-agent"/>
             <zipfileset src="lib/asm-3.2.jar"/>
             <zipfileset src="lib/asm-commons-3.2.jar"/>
+            <zipfileset src="lib/collections-generic-4.01.jar"/>
             <zipfileset src="../de.bodden.chakalaka.genericlib/rvlib.jar"/>
         </jar>
 		<delete dir="bin-agent"/>

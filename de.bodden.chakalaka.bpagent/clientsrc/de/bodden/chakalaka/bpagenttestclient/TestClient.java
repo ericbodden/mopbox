@@ -31,13 +31,13 @@ public class TestClient {
 
 			@Override
 			public String classNameForSymbol(String symbol) {
-				return "Main";
+				return "Waiter";
 			}
 
 			@Override
 			public int lineNumberForSymbol(String symbol) {
-				if(symbol.equals("a")) return 10;
-				if(symbol.equals("b")) return 11;
+				if(symbol.equals("a")) return 16;
+				if(symbol.equals("b")) return 18;
 				throw new IllegalArgumentException();
 			}
 
