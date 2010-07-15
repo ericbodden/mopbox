@@ -24,9 +24,11 @@
 			debuglevel="lines,vars,source"        	
         >
             <src path="src"/>
+            <src path="shared"/>
             <classpath>
                 <pathelement location="lib/asm-3.2.jar"/>
                 <pathelement location="lib/asm-commons-3.2.jar"/>
+                <pathelement location="../de.bodden.chakalaka.genericlib/rvlib.jar"/>
             </classpath>
         </javac>
     </target>
@@ -39,10 +41,11 @@
            <attribute name="Can-Retransform-Classes" value="true"/>
        </manifest>
 
-        <jar destfile="de.bodden.chakalaka.bpagent.jar" manifest="META-INF/MANIFEST.MF">
+        <jar destfile="bpagent.jar" manifest="META-INF/MANIFEST.MF">
             <fileset dir="bin-agent"/>
             <zipfileset src="lib/asm-3.2.jar"/>
             <zipfileset src="lib/asm-commons-3.2.jar"/>
+            <zipfileset src="../de.bodden.chakalaka.genericlib/rvlib.jar"/>
         </jar>
 		<delete dir="bin-agent"/>
 		<delete dir="META-INF"/>

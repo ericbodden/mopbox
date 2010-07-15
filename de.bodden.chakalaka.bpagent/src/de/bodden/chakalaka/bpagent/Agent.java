@@ -24,9 +24,9 @@ public class Agent {
 			throw new RuntimeException("retransformation not supported");
 		}
 
-		inst.addTransformer(new TransitionInserter(),true /* can retransform */);		
-
-		Thread thread = new Thread(new IncomingConnectionListener());
+		inst.addTransformer(new TransitionInserter(),true /* can retransform */);
+		
+		Thread thread = new Thread(new IncomingConnectionListener(inst));
 		thread.setDaemon(true);	//ok to shut down when thread is still listening
 		thread.start();	
 	}

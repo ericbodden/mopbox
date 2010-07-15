@@ -7,9 +7,9 @@ public interface IFSM extends Serializable {
 	
 	public Set<String> symbols();
 	
-	public String classNameForLabel(String symbol);
+	public String classNameForSymbol(String symbol);
 
-	public int lineNumberForLabel(String symbol);
+	public int lineNumberForSymbol(String symbol);
 	
 	public int numberOfStates();
 	

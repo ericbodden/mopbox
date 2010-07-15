@@ -26,9 +26,9 @@ public class TransitionInserter implements
 	
 	@Override
 	public byte[] transform(ClassLoader loader, final String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-		if(!r.needsMonitoring(className)) return null;		
+		if(!r.needsMonitoring(className)) return null;				
 		
-	    try {
+		try {
 	    	// scan class binary format to find fields for toString() method
 	    	ClassReader creader = new ClassReader(classfileBuffer);
 	    	ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);

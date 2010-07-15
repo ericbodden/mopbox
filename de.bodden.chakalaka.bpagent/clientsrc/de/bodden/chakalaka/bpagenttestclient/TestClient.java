@@ -30,14 +30,15 @@ public class TestClient {
 			}
 
 			@Override
-			public String classNameForLabel(String symbol) {
-				return null;
+			public String classNameForSymbol(String symbol) {
+				return "Main";
 			}
 
 			@Override
-			public int lineNumberForLabel(String symbol) {
-				// TODO Auto-generated method stub
-				return 0;
+			public int lineNumberForSymbol(String symbol) {
+				if(symbol.equals("a")) return 10;
+				if(symbol.equals("b")) return 11;
+				throw new IllegalArgumentException();
 			}
 
 			@Override

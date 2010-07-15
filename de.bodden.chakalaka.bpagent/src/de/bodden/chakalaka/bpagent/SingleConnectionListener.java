@@ -3,7 +3,10 @@ package de.bodden.chakalaka.bpagent;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.lang.instrument.Instrumentation;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.bodden.chakalaka.bpagentshared.IFSM;
 
@@ -11,9 +14,11 @@ import de.bodden.chakalaka.bpagentshared.IFSM;
 public class SingleConnectionListener implements Runnable {
 	
 	private final Socket s;
+	private final Instrumentation inst;
 
-	public SingleConnectionListener(Socket s) {
+	public SingleConnectionListener(Socket s, Instrumentation inst) {
 		this.s = s;
+		this.inst = inst;
 	}
 
 	@Override
@@ -24,7 +29,20 @@ public class SingleConnectionListener implements Runnable {
 			ois = new ObjectInputStream(s.getInputStream());
 			Object o;
 			while((o=ois.readObject())!=null) {
-				FSMConverter.installFSM((IFSM)o);
+				IFSM fsm = (IFSM)o;
+				
+				FSMConverter.installFSM(fsm);
+				
+				Set<String> classNames = new HashSet<String>();
+				for(String s: fsm.symbols()) {
+					classNames.add(fsm.classNameForSymbol(s));
+				}
+				for(Class<?> c: inst.getAllLoadedClasses()) {
+					if(inst.isModifiableClass(c) && classNames.contains(c.getName())) {
+						inst.retransformClasses(c);
+						System.out.println("Retransforming loaded class "+c.getName());
+					}
+				}
 			}
 		} catch(EOFException e) {
 			//end of input; do nothing

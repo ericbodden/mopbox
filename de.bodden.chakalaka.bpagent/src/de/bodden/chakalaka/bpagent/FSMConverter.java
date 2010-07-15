@@ -60,6 +60,8 @@ public class FSMConverter {
 			}
 		};
 		
+		Registry.v().registerMonitor(fsm, template);
+		
 		System.out.println("New monitor template installed.");
 	}
 
