@@ -10,7 +10,7 @@ import org.junit.Test;
 import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
 import de.bodden.rvlib.generic.IVariableBinding;
 import de.bodden.rvlib.generic.def.Event;
-import de.bodden.rvlib.impl.VariableBinding;
+import de.bodden.rvlib.generic.def.VariableBinding;
 
 public class ConnectionClosed extends AbstractTest {
 

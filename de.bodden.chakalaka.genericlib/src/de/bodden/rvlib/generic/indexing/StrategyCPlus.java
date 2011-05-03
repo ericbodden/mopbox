@@ -12,7 +12,7 @@ import de.bodden.rvlib.generic.IMonitor;
 import de.bodden.rvlib.generic.IMonitorTemplate;
 import de.bodden.rvlib.generic.ISymbol;
 import de.bodden.rvlib.generic.IVariableBinding;
-import de.bodden.rvlib.impl.VariableBinding;
+import de.bodden.rvlib.generic.def.VariableBinding;
 
 /**
  * This strategy is known as Algorithm C+ in the ASE paper of Feng Chen at al.

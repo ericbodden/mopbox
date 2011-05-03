@@ -1,4 +1,4 @@
-package de.bodden.rvlib.impl;
+package de.bodden.rvlib.generic.def;
 
 import java.util.ArrayList;
 import java.util.Collections;

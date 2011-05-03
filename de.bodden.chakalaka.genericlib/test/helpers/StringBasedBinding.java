@@ -1,6 +1,6 @@
 package helpers;
 
-import de.bodden.rvlib.impl.VariableBinding;
+import de.bodden.rvlib.generic.def.VariableBinding;
 
 @SuppressWarnings("serial")
 public class StringBasedBinding extends VariableBinding<String,Object> {

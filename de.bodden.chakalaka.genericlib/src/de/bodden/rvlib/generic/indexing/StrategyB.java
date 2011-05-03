@@ -10,7 +10,7 @@ import de.bodden.rvlib.generic.IIndexingStrategy;
 import de.bodden.rvlib.generic.IMonitor;
 import de.bodden.rvlib.generic.IMonitorTemplate;
 import de.bodden.rvlib.generic.IVariableBinding;
-import de.bodden.rvlib.impl.VariableBinding;
+import de.bodden.rvlib.generic.def.VariableBinding;
 
 /**
  * This strategy is known as Algorithm B in the TACAS paper of Feng Chen at al.

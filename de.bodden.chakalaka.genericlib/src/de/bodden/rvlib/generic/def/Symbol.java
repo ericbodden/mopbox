@@ -1,4 +1,4 @@
-package de.bodden.rvlib.impl;
+package de.bodden.rvlib.generic.def;
 
 import de.bodden.rvlib.generic.AbstractMonitorTemplate;
 import de.bodden.rvlib.generic.ISymbol;

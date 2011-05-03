@@ -1,6 +1,6 @@
 package de.bodden.rvlib.generic;
 
-import de.bodden.rvlib.impl.Symbol;
+import de.bodden.rvlib.generic.def.Symbol;
 
 /**
  * This is an abstract template class for {@link IMonitorTemplate}s. It encapsulates common functionality to
