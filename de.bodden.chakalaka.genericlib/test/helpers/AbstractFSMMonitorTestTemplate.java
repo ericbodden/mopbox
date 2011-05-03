@@ -6,6 +6,12 @@ import de.bodden.rvlib.generic.IIndexingStrategy;
 import de.bodden.rvlib.generic.IVariableBinding;
 import de.bodden.rvlib.generic.indexing.IndexingStrategyFactory;
 
+/**
+ * An {@link AbstractFSMMonitorTemplate} with special functionality for supporting JUnit tests.
+ *
+ * The template records a trace. Whenever a match completed, the corresponding binding is added to the trace.
+ * The trace can be retrieved via {@link #getTrace()}.
+ */
 public abstract class AbstractFSMMonitorTestTemplate<L,K,V> extends AbstractFSMMonitorTemplate<L,K,V> {
 	
 	@SuppressWarnings("rawtypes")
@@ -13,7 +19,7 @@ public abstract class AbstractFSMMonitorTestTemplate<L,K,V> extends AbstractFSMM
 	protected String trace = "";
 	
 	@Override
-	public void matchCompleted(IVariableBinding<K,V> binding) {
+	public final void matchCompleted(IVariableBinding<K,V> binding) {
 		trace += binding.toString();
 	}
 	

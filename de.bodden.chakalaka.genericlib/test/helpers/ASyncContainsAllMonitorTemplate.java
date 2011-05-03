@@ -4,6 +4,10 @@ import de.bodden.rvlib.finitestate.State;
 import de.bodden.rvlib.generic.IAlphabet;
 import de.bodden.rvlib.generic.def.Alphabet;
 
+/**
+ * This is a concrete monitor template for the following regular-expression property:
+ * <code>containsAll* sync(c1) containsAll(c1)* sync(c2) containsAll(c2)</code> 
+ */
 public class ASyncContainsAllMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
 	
 	@Override

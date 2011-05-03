@@ -11,6 +11,9 @@ import org.junit.Test;
 import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
 import de.bodden.rvlib.generic.def.Event;
 
+/**
+ * Tests for the {@link ASyncContainsAllMonitorTemplate}. 
+ */
 public class ASyncContainsAll extends AbstractTest {
 
 	@Override

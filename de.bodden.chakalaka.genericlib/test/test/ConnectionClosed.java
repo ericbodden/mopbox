@@ -12,6 +12,9 @@ import de.bodden.rvlib.generic.IVariableBinding;
 import de.bodden.rvlib.generic.def.Event;
 import de.bodden.rvlib.generic.def.VariableBinding;
 
+/**
+ * Tests for the {@link ConnectionClosedMonitorTemplate}. 
+ */
 public class ConnectionClosed extends AbstractTest {
 
 	IVariableBinding<String,Object> v,v2;
@@ -66,12 +69,12 @@ public class ConnectionClosed extends AbstractTest {
 		Assert.assertEquals("{c=c2}{c=c1}", template.getTrace());
 	}
 
-//	@Test
-//	public void testWriteFirst() {
-//		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));
-//		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
-//		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
-//		Assert.assertEquals("", template.getTrace());
-//	}
+	@Test
+	public void testWriteFirst() {
+		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));
+		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
+		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
+		Assert.assertEquals("", template.getTrace());
+	}
 
 }

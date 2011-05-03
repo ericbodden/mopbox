@@ -8,9 +8,16 @@ import org.junit.Before;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.bodden.rvlib.generic.IIndexingStrategy;
+import de.bodden.rvlib.generic.IMonitorTemplate;
 import de.bodden.rvlib.generic.indexing.IndexingStrategyFactory;
 import de.bodden.rvlib.generic.indexing.StrategyB;
 
+/**
+ * An abstract super class for JUnit tests of this library.
+ * It instantiates {@link IMonitorTemplate}s and {@link IIndexingStrategy}.
+ * 
+ * Also provides methods to record and report timing information.
+ */
 public abstract class AbstractTest {
 	
 	protected final static IndexingStrategyFactory<String,String,Object> factory = new IndexingStrategyFactory<String,String,Object>();
@@ -23,6 +30,9 @@ public abstract class AbstractTest {
 		template = makeTemplate();
 	}
 	
+	/**
+	 * Subclasses must implement this method to return the concrete monitor template that is to be used.
+	 */
 	protected abstract AbstractFSMMonitorTestTemplate<String,String,Object> makeTemplate();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -32,7 +42,7 @@ public abstract class AbstractTest {
 			new LinkedList<Class<? extends IIndexingStrategy>[]>();
 		res.add(new Class[]{StrategyB.class});
 		return res;
-	}
+	}	
 	
 	protected void begin() {
 		before = System.currentTimeMillis();		

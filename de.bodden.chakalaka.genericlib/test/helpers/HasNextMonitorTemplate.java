@@ -5,6 +5,10 @@ import de.bodden.rvlib.finitestate.State;
 import de.bodden.rvlib.generic.IAlphabet;
 import de.bodden.rvlib.generic.def.Alphabet;
 
+/**
+ * This is a concrete monitor template for the following regular-expression property:
+ * <code>next(i) next(i)</code> over the alphabet <code>{hasNext, next}</code> 
+ */
 public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
 
 	@Override

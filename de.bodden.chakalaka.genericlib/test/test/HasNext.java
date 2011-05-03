@@ -11,6 +11,9 @@ import org.junit.Test;
 import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
 import de.bodden.rvlib.generic.def.Event;
 
+/**
+ * Tests for the {@link HasNextMonitorTemplate}. 
+ */
 public class HasNext extends AbstractTest {
 
 	@Override

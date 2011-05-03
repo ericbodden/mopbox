@@ -6,6 +6,10 @@ import de.bodden.rvlib.generic.IAlphabet;
 import de.bodden.rvlib.generic.ISymbol;
 import de.bodden.rvlib.generic.def.Alphabet;
 
+/**
+ * This is a concrete monitor template for the following regular-expression property:
+ * <code>close+(c) write(c)</code> 
+ */
 public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
 
 	@Override

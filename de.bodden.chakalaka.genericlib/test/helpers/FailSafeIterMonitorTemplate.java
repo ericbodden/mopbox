@@ -5,6 +5,10 @@ import de.bodden.rvlib.finitestate.State;
 import de.bodden.rvlib.generic.IAlphabet;
 import de.bodden.rvlib.generic.def.Alphabet;
 
+/**
+ * This is a concrete monitor template for the following regular-expression property:
+ * <code>create(c,i) update(c)* iter(i)+ update(c)+ iter(i)</code> 
+ */
 public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
 
 	@Override

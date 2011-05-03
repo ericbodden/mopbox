@@ -6,6 +6,9 @@ import de.bodden.rvlib.generic.IIndexingStrategy;
 import de.bodden.rvlib.generic.indexing.StrategyC;
 
  
+/**
+ * A test suite encapsulating all current unit tests.
+ */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   ConnectionClosed.class,
