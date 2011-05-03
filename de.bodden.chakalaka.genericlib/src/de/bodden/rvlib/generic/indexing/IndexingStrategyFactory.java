@@ -5,6 +5,9 @@ import java.lang.reflect.Constructor;
 import de.bodden.rvlib.generic.IIndexingStrategy;
 import de.bodden.rvlib.generic.IMonitorTemplate;
 
+/**
+ * This factory instantiates an {@link IIndexingStrategy} using reflection.
+ */
 public class IndexingStrategyFactory<L,K,V> {
 	
 	@SuppressWarnings("unchecked")

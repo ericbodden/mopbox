@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * An {@link IVariableBinding} maps user-declared variables to concrete values.
+ * Keys are compared by identity however. Hence, if {@link String}s are used as
+ * keys, they should be interned (by calling {@link String#intern()} before. 
+ */
 public interface IVariableBinding<K,V> extends Map<K, V> {
 	
 	/**

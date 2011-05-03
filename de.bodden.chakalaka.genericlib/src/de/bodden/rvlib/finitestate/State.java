@@ -3,6 +3,9 @@ package de.bodden.rvlib.finitestate;
 import de.bodden.rvlib.generic.IAlphabet;
 import de.bodden.rvlib.generic.ISymbol;
 
+/**
+ * A default implementation of the {@link IState} interface.
+ */
 public class State<L> implements IState<State<L>,L> {
 	
 	private State<L>[] successorTable;

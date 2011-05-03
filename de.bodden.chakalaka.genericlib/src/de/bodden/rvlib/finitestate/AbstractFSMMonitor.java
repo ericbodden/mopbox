@@ -3,6 +3,13 @@ package de.bodden.rvlib.finitestate;
 import de.bodden.rvlib.generic.IMonitor;
 import de.bodden.rvlib.generic.ISymbol;
 
+/**
+ * Implementation of the {@link IMonitor} interface that is based in a finite-state machine.
+ * Invocations of the {@link #processEvent(ISymbol)} method cause a simple state transition.
+ * 
+ * @param <M>
+ * @param <L>
+ */
 public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> implements IMonitor<M,L>, Cloneable {
 
 	private State<L> currentState;
@@ -11,6 +18,9 @@ public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> im
 		this.currentState = initialState;
 	}
 	
+	/**
+	 * @see IMonitor#processEvent(ISymbol)
+	 */
 	@Override
 	public boolean processEvent(ISymbol<L> s) {
 		if(currentState!=null)
@@ -21,6 +31,9 @@ public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> im
 		return false;
 	}
 
+	/**
+	 * @see IMonitor#copy()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public M copy() {

@@ -3,6 +3,7 @@ package de.bodden.rvlib.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,11 @@ import org.apache.commons.collections15.map.ReferenceIdentityMap;
 
 import de.bodden.rvlib.generic.IVariableBinding;
 
+/**
+ * A {@link VariableBinding} maps user-declared variables to concrete values. It is similar to a {@link HashMap} and
+ * indeed uses such a map as super class. Keys are compared by identity however. Hence, if {@link String}s are used as
+ * keys, they should be interned (by calling {@link String#intern()} before. 
+ */
 @SuppressWarnings("serial")
 public class VariableBinding<K,V> extends ReferenceIdentityMap<K, V> implements IVariableBinding<K,V>, Cloneable {
 
