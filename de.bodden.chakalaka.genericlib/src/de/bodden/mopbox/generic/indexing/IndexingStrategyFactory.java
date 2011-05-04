@@ -1,9 +1,9 @@
-package de.bodden.rvlib.generic.indexing;
+package de.bodden.mopbox.generic.indexing;
 
 import java.lang.reflect.Constructor;
 
-import de.bodden.rvlib.generic.IIndexingStrategy;
-import de.bodden.rvlib.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.IMonitorTemplate;
 
 /**
  * This factory instantiates an {@link IIndexingStrategy} using reflection.

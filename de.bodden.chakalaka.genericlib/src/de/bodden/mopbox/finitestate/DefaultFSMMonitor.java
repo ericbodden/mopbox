@@ -1,4 +1,4 @@
-package de.bodden.rvlib.finitestate;
+package de.bodden.mopbox.finitestate;
 
 /**
  * The default implementation for a finite-state runtime monitor.

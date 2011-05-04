@@ -1,4 +1,4 @@
-package de.bodden.rvlib.generic;
+package de.bodden.mopbox.generic;
 
 /**
  * An indexing strategy has the single purpose of dispatching a parametric event,

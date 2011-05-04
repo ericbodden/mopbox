@@ -1,4 +1,4 @@
-package de.bodden.rvlib.generic.indexing;
+package de.bodden.mopbox.generic.indexing;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.bodden.rvlib.generic.IEvent;
-import de.bodden.rvlib.generic.IIndexingStrategy;
-import de.bodden.rvlib.generic.IMonitor;
-import de.bodden.rvlib.generic.IMonitorTemplate;
-import de.bodden.rvlib.generic.ISymbol;
-import de.bodden.rvlib.generic.IVariableBinding;
-import de.bodden.rvlib.generic.def.VariableBinding;
+import de.bodden.mopbox.generic.IEvent;
+import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.IMonitor;
+import de.bodden.mopbox.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.ISymbol;
+import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
  * This strategy is known as Algorithm C+ in the ASE paper of Feng Chen at al.

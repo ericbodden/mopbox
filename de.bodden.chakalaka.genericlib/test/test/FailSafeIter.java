@@ -8,8 +8,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
-import de.bodden.rvlib.generic.def.Event;
+import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
+import de.bodden.mopbox.generic.def.Event;
 
 /**
  * Tests for the {@link FailSafeIterMonitorTemplate}. 

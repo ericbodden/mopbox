@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import org.junit.Before;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.bodden.rvlib.generic.IIndexingStrategy;
-import de.bodden.rvlib.generic.IMonitorTemplate;
-import de.bodden.rvlib.generic.indexing.IndexingStrategyFactory;
-import de.bodden.rvlib.generic.indexing.StrategyB;
+import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.indexing.IndexingStrategyFactory;
+import de.bodden.mopbox.generic.indexing.StrategyB;
 
 /**
  * An abstract super class for JUnit tests of this library.

@@ -1,7 +1,7 @@
-package de.bodden.rvlib.generic.def;
+package de.bodden.mopbox.generic.def;
 
-import de.bodden.rvlib.generic.AbstractMonitorTemplate;
-import de.bodden.rvlib.generic.ISymbol;
+import de.bodden.mopbox.generic.AbstractMonitorTemplate;
+import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * This class represents a symbol. A symbol is member of an alphabet

@@ -1,4 +1,4 @@
-package de.bodden.rvlib.generic;
+package de.bodden.mopbox.generic;
 
 import java.util.List;
 import java.util.Map;

@@ -1,7 +1,7 @@
-package de.bodden.rvlib.finitestate;
+package de.bodden.mopbox.finitestate;
 
-import de.bodden.rvlib.generic.IMonitor;
-import de.bodden.rvlib.generic.ISymbol;
+import de.bodden.mopbox.generic.IMonitor;
+import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * Implementation of the {@link IMonitor} interface that is based in a finite-state machine.

@@ -1,11 +1,11 @@
-package de.bodden.rvlib.generic.indexing;
+package de.bodden.mopbox.generic.indexing;
 
 
 import java.util.Set;
 
-import de.bodden.rvlib.generic.IMonitor;
-import de.bodden.rvlib.generic.IMonitorTemplate;
-import de.bodden.rvlib.generic.ISymbol;
+import de.bodden.mopbox.generic.IMonitor;
+import de.bodden.mopbox.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * This strategy is known as Algorithm C in the TACAS paper of Feng Chen at al.

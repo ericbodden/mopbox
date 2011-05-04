@@ -1,6 +1,6 @@
-package de.bodden.rvlib.generic;
+package de.bodden.mopbox.generic;
 
-import de.bodden.rvlib.generic.def.Symbol;
+import de.bodden.mopbox.generic.def.Symbol;
 
 /**
  * This is an abstract template class for {@link IMonitorTemplate}s. It encapsulates common functionality to
@@ -65,7 +65,7 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	}
 
 	/**
-	 * @see de.bodden.rvlib.generic.IMonitorTemplate#processEvent(de.bodden.rvlib.generic.IEvent)
+	 * @see de.bodden.mopbox.generic.IMonitorTemplate#processEvent(de.bodden.mopbox.generic.IEvent)
 	 */
 	@Override
 	public void processEvent(IEvent<L,K,V> e) {

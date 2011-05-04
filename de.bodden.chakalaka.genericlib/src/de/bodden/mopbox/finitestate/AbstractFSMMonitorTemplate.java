@@ -1,12 +1,12 @@
-package de.bodden.rvlib.finitestate;
+package de.bodden.mopbox.finitestate;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import de.bodden.rvlib.generic.AbstractMonitorTemplate;
-import de.bodden.rvlib.generic.IMonitorTemplate;
-import de.bodden.rvlib.generic.ISymbol;
-import de.bodden.rvlib.generic.IVariableBinding;
+import de.bodden.mopbox.generic.AbstractMonitorTemplate;
+import de.bodden.mopbox.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.ISymbol;
+import de.bodden.mopbox.generic.IVariableBinding;
 
 /**
  * This is an abstract super class for {@link IMonitorTemplate}s of finite-state runtime monitors.
@@ -43,7 +43,7 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	}
 	
 	/**
-	 * @see de.bodden.rvlib.generic.IMonitorTemplate#createMonitorPrototype()
+	 * @see de.bodden.mopbox.generic.IMonitorTemplate#createMonitorPrototype()
 	 */
 	@Override
 	public DefaultFSMMonitor<L> createMonitorPrototype() {

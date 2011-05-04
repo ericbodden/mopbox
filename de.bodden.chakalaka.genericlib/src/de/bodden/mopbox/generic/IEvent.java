@@ -1,4 +1,4 @@
-package de.bodden.rvlib.generic;
+package de.bodden.mopbox.generic;
 
 /**
  * Objects implementing this interface encapsulate a single event. An event is defined through a symbol

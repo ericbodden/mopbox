@@ -2,8 +2,8 @@ package test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import de.bodden.rvlib.generic.IIndexingStrategy;
-import de.bodden.rvlib.generic.indexing.StrategyC;
+import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.indexing.StrategyC;
 
  
 /**

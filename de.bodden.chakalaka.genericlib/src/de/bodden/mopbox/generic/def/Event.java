@@ -1,9 +1,9 @@
-package de.bodden.rvlib.generic.def;
+package de.bodden.mopbox.generic.def;
 
-import de.bodden.rvlib.generic.IEvent;
-import de.bodden.rvlib.generic.IMonitor;
-import de.bodden.rvlib.generic.ISymbol;
-import de.bodden.rvlib.generic.IVariableBinding;
+import de.bodden.mopbox.generic.IEvent;
+import de.bodden.mopbox.generic.IMonitor;
+import de.bodden.mopbox.generic.ISymbol;
+import de.bodden.mopbox.generic.IVariableBinding;
 
 /**
  * This is the default implementation of the {@link IEvent} interface.

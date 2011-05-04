@@ -1,10 +1,10 @@
 package helpers;
 
 import test.AllTests;
-import de.bodden.rvlib.finitestate.AbstractFSMMonitorTemplate;
-import de.bodden.rvlib.generic.IIndexingStrategy;
-import de.bodden.rvlib.generic.IVariableBinding;
-import de.bodden.rvlib.generic.indexing.IndexingStrategyFactory;
+import de.bodden.mopbox.finitestate.AbstractFSMMonitorTemplate;
+import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.indexing.IndexingStrategyFactory;
 
 /**
  * An {@link AbstractFSMMonitorTemplate} with special functionality for supporting JUnit tests.

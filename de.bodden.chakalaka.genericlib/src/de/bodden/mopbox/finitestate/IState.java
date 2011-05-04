@@ -1,8 +1,8 @@
-package de.bodden.rvlib.finitestate;
+package de.bodden.mopbox.finitestate;
 
-import de.bodden.rvlib.generic.IMonitor;
-import de.bodden.rvlib.generic.IMonitorTemplate;
-import de.bodden.rvlib.generic.ISymbol;
+import de.bodden.mopbox.generic.IMonitor;
+import de.bodden.mopbox.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * This interface represents a state in a finite-state machine.
@@ -30,7 +30,7 @@ public interface IState<S extends IState<S,L>,L> extends Cloneable {
 	/**
 	 * Returns <code>true</code> if this state is final. During evaluation,
 	 * when an {@link IMonitor} reaches a final state, then the {@link IMonitorTemplate}
-	 * of this monitor will call its {@link IMonitorTemplate#matchCompleted(de.bodden.rvlib.generic.IVariableBinding)}
+	 * of this monitor will call its {@link IMonitorTemplate#matchCompleted(de.bodden.mopbox.generic.IVariableBinding)}
 	 * method with the binding that this monitor is associated with. 	 
 	 */	
 	public boolean isFinal();

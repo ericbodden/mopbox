@@ -1,7 +1,7 @@
 package helpers;
 
-import de.bodden.rvlib.generic.IVariableBinding;
-import de.bodden.rvlib.generic.def.VariableBinding;
+import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
  * This class represents a simple variable binding that maps

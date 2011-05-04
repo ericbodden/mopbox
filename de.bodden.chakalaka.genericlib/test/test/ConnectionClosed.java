@@ -7,10 +7,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.bodden.rvlib.finitestate.DefaultFSMMonitor;
-import de.bodden.rvlib.generic.IVariableBinding;
-import de.bodden.rvlib.generic.def.Event;
-import de.bodden.rvlib.generic.def.VariableBinding;
+import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
+import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.def.Event;
+import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
  * Tests for the {@link ConnectionClosedMonitorTemplate}. 

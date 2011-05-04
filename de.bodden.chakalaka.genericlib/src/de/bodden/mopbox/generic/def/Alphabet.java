@@ -1,9 +1,9 @@
-package de.bodden.rvlib.generic.def;
+package de.bodden.mopbox.generic.def;
 
 import java.util.HashSet;
 
-import de.bodden.rvlib.generic.IAlphabet;
-import de.bodden.rvlib.generic.ISymbol;
+import de.bodden.mopbox.generic.IAlphabet;
+import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * This is the default implementation of the {@link IAlphabet} interface.

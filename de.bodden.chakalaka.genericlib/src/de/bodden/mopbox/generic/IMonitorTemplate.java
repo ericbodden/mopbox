@@ -1,8 +1,8 @@
-package de.bodden.rvlib.generic;
+package de.bodden.mopbox.generic;
 
 import java.util.Set;
 
-import de.bodden.rvlib.generic.indexing.StrategyCPlus;
+import de.bodden.mopbox.generic.indexing.StrategyCPlus;
 
 /**
  * An {@link IMonitorTemplate} represents a template for runtime monitors, i.e.,

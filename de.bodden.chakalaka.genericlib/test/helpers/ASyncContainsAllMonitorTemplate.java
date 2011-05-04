@@ -1,8 +1,8 @@
 package helpers;
 
-import de.bodden.rvlib.finitestate.State;
-import de.bodden.rvlib.generic.IAlphabet;
-import de.bodden.rvlib.generic.def.Alphabet;
+import de.bodden.mopbox.finitestate.State;
+import de.bodden.mopbox.generic.IAlphabet;
+import de.bodden.mopbox.generic.def.Alphabet;
 
 /**
  * This is a concrete monitor template for the following regular-expression property:

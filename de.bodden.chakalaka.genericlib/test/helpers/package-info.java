@@ -1,5 +1,5 @@
 /**
- * This package provides {@link de.bodden.rvlib.generic.IMonitorTemplate}s for concrete properties
+ * This package provides {@link de.bodden.mopbox.generic.IMonitorTemplate}s for concrete properties
  * that one may want to check using runtime verification.
  * 
  * For an explanation of those properties, see the following publication:

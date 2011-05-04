@@ -1,4 +1,4 @@
-package de.bodden.rvlib.generic.def;
+package de.bodden.mopbox.generic.def;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections15.map.AbstractReferenceMap;
 import org.apache.commons.collections15.map.ReferenceIdentityMap;
 
-import de.bodden.rvlib.generic.IVariableBinding;
+import de.bodden.mopbox.generic.IVariableBinding;
 
 /**
  * A {@link VariableBinding} maps user-declared variables to concrete values. It is similar to a {@link HashMap} and

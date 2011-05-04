@@ -1,7 +1,7 @@
-package de.bodden.rvlib.finitestate;
+package de.bodden.mopbox.finitestate;
 
-import de.bodden.rvlib.generic.IAlphabet;
-import de.bodden.rvlib.generic.ISymbol;
+import de.bodden.mopbox.generic.IAlphabet;
+import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * A default implementation of the {@link IState} interface.
@@ -20,7 +20,7 @@ public class State<L> implements IState<State<L>,L> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.bodden.rvlib.impl.IState#registerSuccessor(de.bodden.rvlib.impl.Symbol, de.bodden.rvlib.impl.IState)
+	 * @see de.bodden.mopbox.impl.IState#registerSuccessor(de.bodden.mopbox.impl.Symbol, de.bodden.mopbox.impl.IState)
 	 */
 	public void addTransition(ISymbol<L> sym, State<L> succ) {
 		assert successorTable[sym.getIndex()]==null : "successor already set";
@@ -28,7 +28,7 @@ public class State<L> implements IState<State<L>,L> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.bodden.rvlib.impl.IState#successor(de.bodden.rvlib.impl.Symbol)
+	 * @see de.bodden.mopbox.impl.IState#successor(de.bodden.mopbox.impl.Symbol)
 	 */
 	public State<L> successor(ISymbol<L> sym) {
 		return successorTable[sym.getIndex()];
