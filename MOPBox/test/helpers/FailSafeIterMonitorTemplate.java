@@ -13,10 +13,10 @@ public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<
 
 	@Override
 	protected IAlphabet<String> createAlphabet() {
-		Alphabet<String> alphabet = new Alphabet<String>();
-		alphabet.add(makeNewSymbol("create"));
-		alphabet.add(makeNewSymbol("update"));
-		alphabet.add(makeNewSymbol("iter"));
+		IAlphabet<String> alphabet = new Alphabet<String>();
+		alphabet.makeNewSymbol("create");
+		alphabet.makeNewSymbol("update");
+		alphabet.makeNewSymbol("iter");
 		return alphabet;
 	}
 	

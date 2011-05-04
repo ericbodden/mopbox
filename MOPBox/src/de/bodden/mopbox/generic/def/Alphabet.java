@@ -13,4 +13,30 @@ import de.bodden.mopbox.generic.ISymbol;
 @SuppressWarnings("serial")
 public class Alphabet<L> extends HashSet<ISymbol<L>> implements IAlphabet<L> {
 
+	private int nextSymbolIndex = 0;
+
+	/**
+	 * Creates a new symbol for the given label, adding the symbol to this
+	 * alphabet.
+	 */
+	@Override
+	public ISymbol<L> makeNewSymbol(L label) {
+		Symbol<L> symbol = new Symbol<L>(label,nextSymbolIndex++);
+		add(symbol);
+		return symbol;
+	}
+	
+	/**
+	 * Retrieves a symbol by its label.
+	 */
+	@Override
+	public ISymbol<L> getSymbolByLabel(L label) {
+		for (ISymbol<L> sym : this) {
+			if(sym.getLabel().equals(label)) {
+				return sym;
+			}
+		}
+		throw new IllegalArgumentException("Unknown symbol:" +label);
+	}
+	
 }

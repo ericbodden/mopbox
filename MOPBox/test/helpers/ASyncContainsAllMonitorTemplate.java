@@ -12,9 +12,9 @@ public class ASyncContainsAllMonitorTemplate extends AbstractFSMMonitorTestTempl
 	
 	@Override
 	protected IAlphabet<String> createAlphabet() {
-		Alphabet<String> alphabet = new Alphabet<String>();
-		alphabet.add(makeNewSymbol("sync"));
-		alphabet.add(makeNewSymbol("containsAll"));
+		IAlphabet<String> alphabet = new Alphabet<String>();
+		alphabet.makeNewSymbol("sync");
+		alphabet.makeNewSymbol("containsAll");
 		return alphabet;
 	}
 

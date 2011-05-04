@@ -1,6 +1,5 @@
 package de.bodden.mopbox.generic;
 
-import de.bodden.mopbox.generic.def.Symbol;
 
 /**
  * This is an abstract template class for {@link IMonitorTemplate}s. It encapsulates common functionality to
@@ -15,8 +14,8 @@ import de.bodden.mopbox.generic.def.Symbol;
 public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> implements IMonitorTemplate<M,L,K,V> {
 
 	private final IAlphabet<L> alphabet;
+
 	private final IIndexingStrategy<L,K,V> indexingStrategy;
-	private int nextSymbolIndex = 0;
 	
 	protected AbstractMonitorTemplate() {
 		alphabet = createAlphabet();
@@ -37,29 +36,6 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 */
 	protected abstract IAlphabet<L> createAlphabet();
 	
-	/**
-	 * Creates a new symbol for the given label.
-	 * This symbol still needs to be added to the alphabet.
-	 * TODO simplify this
-	 * TODO move this into {@link IAlphabet}?
-	 */
-	protected ISymbol<L> makeNewSymbol(L label) {
-		return new Symbol<L>(label,nextSymbolIndex++);
-	}
-	
-	/**
-	 * Retrieves a symbol by its label.
-	 */
-	public ISymbol<L> getSymbolByLabel(L label) {
-		for (ISymbol<L> sym : alphabet) {
-			if(sym.getLabel().equals(label)) {
-				return sym;
-			}
-		}
-		throw new IllegalArgumentException("Unknown symbol:" +label);
-	}
-	
-
 	public IAlphabet<L> getAlphabet() {
 		return alphabet;
 	}
@@ -71,5 +47,11 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	public void processEvent(IEvent<L,K,V> e) {
 		indexingStrategy.processEvent(e);
 	}
-
+	
+	/**
+	 * Retrieves a symbol by its label.
+	 */
+	public ISymbol<L> getSymbolByLabel(L label) {
+		return alphabet.getSymbolByLabel(label);
+	}
 }

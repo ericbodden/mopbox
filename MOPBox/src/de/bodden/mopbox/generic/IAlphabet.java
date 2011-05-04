@@ -8,4 +8,14 @@ import java.util.Set;
  */
 public interface IAlphabet<L> extends Set<ISymbol<L>> {
 
+	/**
+	 * Creates a new symbol for the given label, adding the symbol to this
+	 * alphabet.
+	 */
+	public ISymbol<L> makeNewSymbol(L label);
+
+	/**
+	 * Retrieves a symbol by its label.
+	 */
+	public ISymbol<L> getSymbolByLabel(L label);
 }

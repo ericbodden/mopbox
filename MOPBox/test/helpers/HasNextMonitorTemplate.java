@@ -13,9 +13,9 @@ public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<Strin
 
 	@Override
 	protected IAlphabet<String> createAlphabet() {
-		Alphabet<String> alphabet = new Alphabet<String>();
-		alphabet.add(makeNewSymbol("hasNext"));
-		alphabet.add(makeNewSymbol("next"));
+		IAlphabet<String> alphabet = new Alphabet<String>();
+		alphabet.makeNewSymbol("hasNext");
+		alphabet.makeNewSymbol("next");
 		return alphabet;
 	}
 	

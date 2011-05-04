@@ -3,7 +3,6 @@ package helpers;
 import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
-import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.def.Alphabet;
 
 /**
@@ -14,11 +13,9 @@ public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTempl
 
 	@Override
 	protected IAlphabet<String> createAlphabet() {
-		Alphabet<String> alphabet = new Alphabet<String>();
-		ISymbol<String> close = makeNewSymbol("close");
-		alphabet.add(close);
-		ISymbol<String> write = makeNewSymbol("write");
-		alphabet.add(write);
+		IAlphabet<String> alphabet = new Alphabet<String>();
+		alphabet.makeNewSymbol("close");
+		alphabet.makeNewSymbol("write");
 		return alphabet;
 	}
 
