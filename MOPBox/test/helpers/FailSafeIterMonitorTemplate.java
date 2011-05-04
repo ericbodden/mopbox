@@ -1,6 +1,5 @@
 package helpers;
 
-import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.def.Alphabet;
@@ -20,7 +19,7 @@ public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<
 		return alphabet;
 	}
 	
-	protected State<String> doCreateAndWireInitialState() {
+	protected State<String> setupStatesAndTransitions() {
 		State<String> initial = makeState(false);
 		State<String> iterating = makeState(false);
 		State<String> updated = makeState(false);
@@ -34,11 +33,6 @@ public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<
 		updated.addTransition(getSymbolByLabel("update"), updated);
 		updated.addTransition(getSymbolByLabel("iter"), error);
 		return initial;
-	}
-
-	@Override
-	public DefaultFSMMonitor<String> createMonitorPrototype() {
-		return new DefaultFSMMonitor<String>(createAndWireInitialState());
 	}
 
 }

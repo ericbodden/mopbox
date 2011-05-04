@@ -57,20 +57,12 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	 */
 	private State<L> initialState() {
 		if(initialState==null) {
-			initialState = createAndWireInitialState();
+			nextStateNum= 0;
+			initialState = setupStatesAndTransitions();
 		}
 		return initialState;
 	}
 	
-	/**
-	 * Creates all states and wires them with transitions.
-	 * Then returns the initial state.
-	 */
-	protected final State<L> createAndWireInitialState() {
-		nextStateNum= 0;
-		return doCreateAndWireInitialState();
-	}
-
 	/**
 	 * Subclasses implement this method to create all states and
 	 * wire them with transitions. The method then returns the
@@ -89,6 +81,6 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	 * </code>
 	 * 
 	 */
-	protected abstract State<L> doCreateAndWireInitialState();
-
+	protected abstract State<L> setupStatesAndTransitions();
+	
 }

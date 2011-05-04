@@ -1,6 +1,5 @@
 package helpers;
 
-import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.def.Alphabet;
@@ -19,7 +18,7 @@ public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTempl
 		return alphabet;
 	}
 
-	protected State<String> doCreateAndWireInitialState() {
+	protected State<String> setupStatesAndTransitions() {
 		State<String> initial = makeState(false);
 		State<String> closed = makeState(false);
 		State<String> error = makeState(true);
@@ -28,11 +27,6 @@ public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTempl
 		closed.addTransition(getSymbolByLabel("close"),closed);
 		closed.addTransition(getSymbolByLabel("write"), error);
 		return initial;
-	}
-
-	@Override
-	public DefaultFSMMonitor<String> createMonitorPrototype() {
-		return new DefaultFSMMonitor<String>(createAndWireInitialState());
 	}
 
 }

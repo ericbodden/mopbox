@@ -1,6 +1,5 @@
 package helpers;
 
-import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.def.Alphabet;
@@ -19,7 +18,7 @@ public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<Strin
 		return alphabet;
 	}
 	
-	protected State<String> doCreateAndWireInitialState() {
+	protected State<String> setupStatesAndTransitions() {
 		State<String> initial = makeState(false);
 		State<String> middle = makeState(false);
 		State<String> error = makeState(true);
@@ -28,11 +27,6 @@ public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<Strin
 		middle.addTransition(getSymbolByLabel("next"), error);
 		error.addTransition(getSymbolByLabel("next"), error);
 		return initial;
-	}
-
-	@Override
-	public DefaultFSMMonitor<String> createMonitorPrototype() {
-		return new DefaultFSMMonitor<String>(createAndWireInitialState());
 	}
 
 }
