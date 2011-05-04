@@ -2,7 +2,6 @@ package helpers;
 
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
-import de.bodden.mopbox.generic.def.Alphabet;
 
 /**
  * This is a concrete monitor template for the following regular-expression property:
@@ -11,11 +10,9 @@ import de.bodden.mopbox.generic.def.Alphabet;
 public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
 
 	@Override
-	protected IAlphabet<String> createAlphabet() {
-		IAlphabet<String> alphabet = new Alphabet<String>();
-		alphabet.makeNewSymbol("close");
-		alphabet.makeNewSymbol("write");
-		return alphabet;
+	protected void fillAlphabet(IAlphabet<String> a) {
+		a.makeNewSymbol("close");
+		a.makeNewSymbol("write");
 	}
 
 	protected State<String> setupStatesAndTransitions() {

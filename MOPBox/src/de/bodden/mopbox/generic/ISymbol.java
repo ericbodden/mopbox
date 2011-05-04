@@ -8,6 +8,9 @@ package de.bodden.mopbox.generic;
  * Symbols are not usually created directly but by calling
  * {@link AbstractMonitorTemplate#makeNewSymbol}
  * 
+ * For efficiency, symbols are uniquely indexed. This allows for
+ * array-based implementations. 
+ * 
  * @param <L> The type to use as label for a symbol. Often {@link String}.
  */
 public interface ISymbol<L> {
@@ -16,5 +19,4 @@ public interface ISymbol<L> {
 
 	L getLabel();
 	
-
 }

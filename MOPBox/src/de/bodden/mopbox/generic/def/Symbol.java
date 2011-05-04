@@ -1,6 +1,7 @@
 package de.bodden.mopbox.generic.def;
 
 import de.bodden.mopbox.generic.AbstractMonitorTemplate;
+import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.ISymbol;
 
 /**
@@ -8,8 +9,11 @@ import de.bodden.mopbox.generic.ISymbol;
  * which a monitor is evaluated over. Symbols can not only be labeled with
  * Strings but also with other Objects of the generic Type T.
  * 
+ * Symbols are indexed, usually starting at 0. Clients can exploit this 
+ * for efficiency.
+ * 
  * Symbols are not usually created directly but by calling
- * {@link AbstractMonitorTemplate#makeNewSymbol}
+ * {@link IAlphabet#makeNewSymbol(Object)}
  * 
  * @param <T> The type to use as label for a symbol. Often {@link String}.
  */

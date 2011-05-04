@@ -1,5 +1,7 @@
 package de.bodden.mopbox.generic;
 
+import de.bodden.mopbox.generic.def.Alphabet;
+
 
 /**
  * This is an abstract template class for {@link IMonitorTemplate}s. It encapsulates common functionality to
@@ -18,8 +20,16 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	private final IIndexingStrategy<L,K,V> indexingStrategy;
 	
 	protected AbstractMonitorTemplate() {
-		alphabet = createAlphabet();
+		alphabet = createAlphabet(); 
+		fillAlphabet(alphabet);
 		indexingStrategy = createIndexingStrategy();		
+	}
+
+	/**
+	 * 
+	 */
+	protected Alphabet<L> createAlphabet() {
+		return new Alphabet<L>();
 	}
 	
 	/**
@@ -34,7 +44,7 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * {@link #makeNewSymbol(Object)} to create new symbols. Symbols can then
 	 * be looked up from the alphabet by using {@link #getSymbolByLabel(Object)}.
 	 */
-	protected abstract IAlphabet<L> createAlphabet();
+	protected abstract void fillAlphabet(IAlphabet<L> alphabet);
 	
 	public IAlphabet<L> getAlphabet() {
 		return alphabet;

@@ -8,6 +8,7 @@ import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * This is the default implementation of the {@link IAlphabet} interface.
+ * Symbols are indexed, starting at 0.
  *
  * @param <L> The type of labels used to label symbols of this alphabet.
  */
