@@ -1,6 +1,7 @@
 package de.bodden.mopbox.generic.def;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.ISymbol;
@@ -10,10 +11,10 @@ import de.bodden.mopbox.generic.ISymbol;
  *
  * @param <L> The type of labels used to label symbols of this alphabet.
  */
-@SuppressWarnings("serial")
-public class Alphabet<L> extends HashSet<ISymbol<L>> implements IAlphabet<L> {
+public class Alphabet<L> implements IAlphabet<L> {
 
 	private int nextSymbolIndex = 0;
+	private HashSet<ISymbol<L>> backingSet = new HashSet<ISymbol<L>>();
 
 	/**
 	 * Creates a new symbol for the given label, adding the symbol to this
@@ -22,7 +23,7 @@ public class Alphabet<L> extends HashSet<ISymbol<L>> implements IAlphabet<L> {
 	@Override
 	public ISymbol<L> makeNewSymbol(L label) {
 		Symbol<L> symbol = new Symbol<L>(label,nextSymbolIndex++);
-		add(symbol);
+		backingSet.add(symbol);
 		return symbol;
 	}
 	
@@ -37,6 +38,16 @@ public class Alphabet<L> extends HashSet<ISymbol<L>> implements IAlphabet<L> {
 			}
 		}
 		throw new IllegalArgumentException("Unknown symbol:" +label);
+	}
+
+	@Override
+	public Iterator<ISymbol<L>> iterator() {
+		return backingSet.iterator();
+	}
+
+	@Override
+	public int size() {
+		return backingSet.size();
 	}
 	
 }

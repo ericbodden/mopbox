@@ -1,6 +1,7 @@
 package de.bodden.mopbox.generic.indexing;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 import de.bodden.mopbox.generic.IMonitor;
@@ -26,9 +27,11 @@ public class StrategyC<M extends IMonitor<M,L>,L,K,V> extends StrategyCPlus<M,L,
 	
 	@Override
 	protected Set<ISymbol<L>> computeCreationSymbols(IMonitorTemplate<M,L,K,V> template) {
-		//use whole alphabet
-		return template.getAlphabet();
+		Set<ISymbol<L>> res = new HashSet<ISymbol<L>>();
+		for(ISymbol<L> sym: template.getAlphabet()) {
+			res.add(sym);
+		}
+		return res;
 	}
 	
-
 }
