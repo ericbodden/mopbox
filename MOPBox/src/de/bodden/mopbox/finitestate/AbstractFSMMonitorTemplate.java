@@ -30,7 +30,6 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	 * either (a) leads to a non-initial state or (b) leads to no state at all,
 	 * i.e., prevents a match.  
 	 */
-	@Override
 	public Set<ISymbol<L>> computeCreationSymbols() {
 		Set<ISymbol<L>> creationSyms = new HashSet<ISymbol<L>>();
 		for(ISymbol<L> s: getAlphabet()) {

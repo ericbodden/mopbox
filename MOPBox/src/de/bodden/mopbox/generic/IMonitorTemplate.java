@@ -1,8 +1,5 @@
 package de.bodden.mopbox.generic;
 
-import java.util.Set;
-
-import de.bodden.mopbox.generic.indexing.StrategyCPlus;
 
 /**
  * An {@link IMonitorTemplate} represents a template for runtime monitors, i.e.,
@@ -35,12 +32,6 @@ public interface IMonitorTemplate<M extends IMonitor<M,L>,L,K,V> {
 	 * Returns a concrete instance of a runtime monitor for this template.
 	 */
 	M createMonitorPrototype();
-
-	/**
-	 * Computes creation symbols for this monitor. Required by Algorithm {@link StrategyCPlus}.
-	 * TODO what would be a safe default approximation here? 
-	 */
-	Set<ISymbol<L>> computeCreationSymbols();
 	
 	/**
 	 * Returns the alphabet which monitors of this template are evaluated over.
