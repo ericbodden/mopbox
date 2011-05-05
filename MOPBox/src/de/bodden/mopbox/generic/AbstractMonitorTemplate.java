@@ -39,10 +39,9 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	protected abstract IIndexingStrategy<L,K,V> createIndexingStrategy();
 
 	/**
-	 * Fills the alphabet with {@link ISymbol}s. The alphabet can be retrieved
-	 * using {@link #getAlphabet()}. There also exists the factory method
-	 * {@link #makeNewSymbol(Object)} to create new symbols. Symbols can then
-	 * be looked up from the alphabet by using {@link #getSymbolByLabel(Object)}.
+	 * Fills the alphabet with {@link ISymbol}s by calling 
+	 * {@link IAlphabet#makeNewSymbol(Object)}.
+	 * Symbols can then be looked up from the alphabet by using {@link #getSymbolByLabel(Object)}.
 	 */
 	protected abstract void fillAlphabet(IAlphabet<L> alphabet);
 	
