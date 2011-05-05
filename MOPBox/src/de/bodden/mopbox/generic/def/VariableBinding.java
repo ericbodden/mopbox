@@ -144,7 +144,7 @@ public class VariableBinding<K,V> extends ReferenceIdentityMap<K, V> implements 
 			K k = iterator.next();
 			sb.append(k);
 			sb.append("=");
-			sb.append(System.identityHashCode(get(k)));
+			sb.append(get(k));
 			if(iterator.hasNext()) sb.append(", ");
 		}
 		sb.append("}");
