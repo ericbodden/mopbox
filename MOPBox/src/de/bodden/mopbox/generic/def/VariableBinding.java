@@ -31,9 +31,7 @@ public class VariableBinding<K,V> extends ReferenceIdentityMap<K, V> implements 
 	}
 
 	public VariableBinding() {
-		//TODO want to use weak values here but the problem is that these maps are used as keys
-		//in other maps; hence need to update the parent maps!
-		super(AbstractReferenceMap.HARD,AbstractReferenceMap.HARD);
+		this(Collections.<K,V>emptyMap());
 	}
 
 	@Override
