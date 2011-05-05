@@ -8,9 +8,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
-import de.bodden.mopbox.generic.def.Event;
-
 /**
  * Tests for the {@link ASyncContainsAllMonitorTemplate}. 
  */
@@ -23,9 +20,9 @@ public class ASyncContainsAll extends AbstractTest {
 
 	@Test
 	public void testSimple() {
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("sync"),new StringBasedBinding("c=c1")));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("sync"),new StringBasedBinding("d=c2")));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("containsAll"),new StringBasedBinding("c=c1,d=c2")));
+		template.processEvent("sync",new StringBasedBinding("c=c1"));
+		template.processEvent("sync",new StringBasedBinding("d=c2"));
+		template.processEvent("containsAll",new StringBasedBinding("c=c1,d=c2"));
 		Assert.assertEquals("{c=c1, d=c2}", template.getTrace());
 	}
 

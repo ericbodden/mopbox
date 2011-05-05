@@ -32,6 +32,7 @@ public class Alphabet<L> implements IAlphabet<L> {
 	
 	/**
 	 * Retrieves a symbol by its label.
+	 * TODO speed this up or avoid altogether - is called at every event!
 	 */
 	@Override
 	public ISymbol<L> getSymbolByLabel(L label) {

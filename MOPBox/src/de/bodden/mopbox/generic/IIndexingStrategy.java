@@ -21,6 +21,13 @@ package de.bodden.mopbox.generic;
  */
 public interface IIndexingStrategy<L,K,V> {
 	
-	void processEvent(IEvent<L,K,V> e);
+	/**
+	 * Update the internal state of all related monitors by sending the parameter event
+	 * to the respective monitors.
+	 * 
+	 * @param symbol The symbol of the event.
+	 * @param binding The variable binding at this event.
+	 */
+	void processEvent(ISymbol<L> symbol, IVariableBinding<K, V> bind);
 
 }

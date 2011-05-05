@@ -16,8 +16,11 @@ public interface IMonitorTemplate<M extends IMonitor<M,L>,L,K,V> {
 	/**
 	 * Update the internal state of all related monitors by sending the parameter event
 	 * to the respective monitors.
+	 * 
+	 * @param label The label of the event.
+	 * @param binding The variable binding at this event.
 	 */
-	void processEvent(IEvent<L,K,V> e);
+	void processEvent(L label, IVariableBinding<K, V> binding);
 	
 	/**
 	 * This is a call-back method. Implementers of this interface can implement this method

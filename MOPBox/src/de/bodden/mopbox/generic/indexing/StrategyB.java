@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.bodden.mopbox.generic.IEvent;
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.IMonitor;
 import de.bodden.mopbox.generic.IMonitorTemplate;
+import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
 import de.bodden.mopbox.generic.def.VariableBinding;
 
@@ -36,20 +36,19 @@ public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrate
 	}
 
 	@Override
-	public void processEvent(IEvent<L,K,V> currentEvent) {
-		IVariableBinding<K,V> currentVariableBinding = currentEvent.getVariableBinding();
+	public void processEvent(ISymbol<L> symbol, IVariableBinding<K, V> bind){
 		Set<IVariableBinding<K,V>> joins = new HashSet<IVariableBinding<K,V>>();
 		for(IVariableBinding<K,V> storedBinding: bindingToMonitor.keySet()) {
-			if(storedBinding.isCompatibleWith(currentVariableBinding)) {
-				joins.add(storedBinding.computeJoinWith(currentVariableBinding));
+			if(storedBinding.isCompatibleWith(bind)) {
+				joins.add(storedBinding.computeJoinWith(bind));
 			}
 		}
 		Set<IVariableBinding<K,V>> keySetCopy = new HashSet<IVariableBinding<K,V>>(bindingToMonitor.keySet());
 		for(IVariableBinding<K,V> binding: joins) {
-			if(binding.isCompatibleWith(currentVariableBinding)) {
+			if(binding.isCompatibleWith(bind)) {
 				IVariableBinding<K,V> oldBinding = binding.findMax(keySetCopy);
 				M copiedMonitor = bindingToMonitor.get(oldBinding).copy();
-				if(copiedMonitor.processEvent(currentEvent.getSymbol())) {
+				if(copiedMonitor.processEvent(symbol)) {
 					template.matchCompleted(oldBinding);
 				}
 				bindingToMonitor.put(binding, copiedMonitor);

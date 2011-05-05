@@ -7,9 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
 import de.bodden.mopbox.generic.IVariableBinding;
-import de.bodden.mopbox.generic.def.Event;
 import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
@@ -42,38 +40,38 @@ public class ConnectionClosed extends AbstractTest {
 
 	@Test
 	public void testSimple() {
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
+		template.processEvent("close",v);
+		template.processEvent("write",v2);
+		template.processEvent("close",v2);
+		template.processEvent("write",v2);
+		template.processEvent("write",v);	
 		Assert.assertEquals("{c=c1}", template.getTrace());
 	}
 
 	@Test
 	public void testInterleaving() {
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
+		template.processEvent("close",v);
+		template.processEvent("write",v2);
+		template.processEvent("close",v2);
+		template.processEvent("write",v2);
+		template.processEvent("write",v);	
 		Assert.assertEquals("{c=c1}", template.getTrace());
 	}
 
 	@Test
 	public void testTwoMatches() {
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v2));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
+		template.processEvent("close",v);
+		template.processEvent("close",v2);
+		template.processEvent("write",v2);
+		template.processEvent("write",v);	
 		Assert.assertEquals("{c=c2}{c=c1}", template.getTrace());
 	}
 
 	@Test
 	public void testWriteFirst() {
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("close"),v));
-		template.processEvent(new Event<DefaultFSMMonitor<String>,String,String,Object>(template.getSymbolByLabel("write"),v));	
+		template.processEvent("write",v);
+		template.processEvent("close",v);
+		template.processEvent("write",v);	
 		Assert.assertEquals("", template.getTrace());
 	}
 

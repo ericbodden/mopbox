@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.bodden.mopbox.generic.IEvent;
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.IMonitor;
 import de.bodden.mopbox.generic.IMonitorTemplate;
@@ -46,13 +45,12 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 	}
 
 	@Override
-	public void processEvent(IEvent<L,K,V> currentEvent) {
-		IVariableBinding<K,V> currentVariableBinding = currentEvent.getVariableBinding();
-		M currentMonitor = bindingToMonitor.get(currentVariableBinding);
+	public void processEvent(ISymbol<L> symbol, IVariableBinding<K, V> bind){
+		M currentMonitor = bindingToMonitor.get(bind);
 		boolean undefined = (currentMonitor==null);
 		if(undefined) { //line 1
 			List<IVariableBinding<K,V>> lessInformativeBindings =
-				currentVariableBinding.strictlyLessInformativeBindingsOrdered(); //line 2
+				bind.strictlyLessInformativeBindingsOrdered(); //line 2
 			IVariableBinding<K,V> foundBinding = null;
 			for (IVariableBinding<K,V> bMax : lessInformativeBindings) { 
 				if(bindingToMonitor.containsKey(bMax)) { //line 3
@@ -61,16 +59,16 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 				}
 			}
 			if(foundBinding!=null) {
-				defineTo(currentVariableBinding,foundBinding); //line 5
-			} else if(creationSymbols.contains(currentEvent.getSymbol())){
-				defineNew(currentVariableBinding); //line 6
+				defineTo(bind,foundBinding); //line 5
+			} else if(creationSymbols.contains(symbol)){
+				defineNew(bind); //line 6
 			}
 			for (IVariableBinding<K,V> bMax : lessInformativeBindings) { //line 8
 				Set<IVariableBinding<K,V>> copy = new HashSet<IVariableBinding<K,V>>(definedMoreInformativeBindingsFor(bMax));
 				for(IVariableBinding<K,V> b: copy) { //line 9
-					if(b.isCompatibleWith(currentVariableBinding)) { //line 9
+					if(b.isCompatibleWith(bind)) { //line 9
 						IVariableBinding<K,V> bComp = b;
-						IVariableBinding<K,V> join = bComp.computeJoinWith(currentVariableBinding);
+						IVariableBinding<K,V> join = bComp.computeJoinWith(bind);
 						if(!bindingToMonitor.containsKey(join)) { //line 10
 							defineTo(join, bComp);
 						}
@@ -79,16 +77,18 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 			}
 		}
 		Set<IVariableBinding<K,V>> union = //line 16
-			new HashSet<IVariableBinding<K,V>>(definedMoreInformativeBindingsFor(currentVariableBinding));
-		union.add(currentVariableBinding); //line 16
+			new HashSet<IVariableBinding<K,V>>(definedMoreInformativeBindingsFor(bind));
+		union.add(bind); //line 16
 		for (IVariableBinding<K,V> bPrime : union) { //line 16
 			M monitor = bindingToMonitor.get(bPrime);			
-			if(monitor!=null && monitor.processEvent(currentEvent.getSymbol())) { //lines 17
+			if(monitor!=null && monitor.processEvent(symbol)) { //lines 17
 				template.matchCompleted(bPrime); //lines 18
 			}
 		}
 		if(DEBUG) {
-			System.err.println(currentEvent);
+			System.err.print(symbol);
+			System.err.print(": ");
+			System.err.println(bind);
 			System.err.println(bindingToMonitor);
 			System.err.println(bindingToDefinedMoreInformativeBindings);
 			System.err.println();

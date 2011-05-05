@@ -26,9 +26,9 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	}
 
 	/**
-	 * 
+	 * Subclasses may override this method to create a custom kind of alphabet. 
 	 */
-	protected Alphabet<L> createAlphabet() {
+	protected IAlphabet<L> createAlphabet() {
 		return new Alphabet<L>();
 	}
 	
@@ -56,8 +56,8 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * @see de.bodden.mopbox.generic.IMonitorTemplate#processEvent(de.bodden.mopbox.generic.IEvent)
 	 */
 	@Override
-	public synchronized void processEvent(IEvent<L,K,V> e) {
-		indexingStrategy.processEvent(e);
+	public void processEvent(L label, IVariableBinding<K, V> binding){
+		indexingStrategy.processEvent(getSymbolByLabel(label), binding);
 	}
 	
 	/**
