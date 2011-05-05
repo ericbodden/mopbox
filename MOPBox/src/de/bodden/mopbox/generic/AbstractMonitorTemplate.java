@@ -50,10 +50,13 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	}
 
 	/**
+	 * TODO Right now the entire method it synchronized. It would be nice to have a more
+	 * fine-grained locking scheme.
+	 * 
 	 * @see de.bodden.mopbox.generic.IMonitorTemplate#processEvent(de.bodden.mopbox.generic.IEvent)
 	 */
 	@Override
-	public void processEvent(IEvent<L,K,V> e) {
+	public synchronized void processEvent(IEvent<L,K,V> e) {
 		indexingStrategy.processEvent(e);
 	}
 	
