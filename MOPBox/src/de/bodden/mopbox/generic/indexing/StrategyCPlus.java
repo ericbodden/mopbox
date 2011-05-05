@@ -32,7 +32,7 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 
 	protected Set<ISymbol<L>> creationSymbols;
 	
-	public StrategyCPlus(IMonitorTemplate<M,L,K,V> template) {
+	public StrategyCPlus(IMonitorTemplate<M,L,K,V> template, Set<ISymbol<L>> creationSymbols) {
 		if(DEBUG) {
 			System.err.println();
 			System.err.println();
@@ -40,13 +40,9 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 		}
 
 		this.template = template;
+		this.creationSymbols = creationSymbols;
 		bindingToMonitor = new HashMap<IVariableBinding<K,V>, M>();		
 		bindingToDefinedMoreInformativeBindings = new HashMap<IVariableBinding<K,V>, Set<IVariableBinding<K,V>>>();
-		creationSymbols = computeCreationSymbols(template);
-	}
-
-	protected Set<ISymbol<L>> computeCreationSymbols(IMonitorTemplate<M,L,K,V> template) {
-		return template.computeCreationSymbols();
 	}
 
 	@Override

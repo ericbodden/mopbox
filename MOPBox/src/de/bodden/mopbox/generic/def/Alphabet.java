@@ -1,7 +1,9 @@
 package de.bodden.mopbox.generic.def;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.ISymbol;
@@ -49,6 +51,11 @@ public class Alphabet<L> implements IAlphabet<L> {
 	@Override
 	public int size() {
 		return backingSet.size();
+	}
+
+	@Override
+	public Set<ISymbol<L>> asSet() {
+		return Collections.unmodifiableSet(backingSet);
 	}
 	
 }

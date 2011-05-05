@@ -1,12 +1,8 @@
 package de.bodden.mopbox.generic.indexing;
 
 
-import java.util.HashSet;
-import java.util.Set;
-
 import de.bodden.mopbox.generic.IMonitor;
 import de.bodden.mopbox.generic.IMonitorTemplate;
-import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * This strategy is known as Algorithm C in the TACAS paper of Feng Chen at al.
@@ -15,23 +11,15 @@ import de.bodden.mopbox.generic.ISymbol;
  * for cases where we get many bindings.
  * As mentioned in the ASE paper, Algorithm C is just a special case of Algorithm C+,
  * where the set of creation symbols is selected as the whole alphabet.
- * We follow this implememntation here.
+ * We follow this implementation here.
  * @see StrategyCPlus
  * @see #computeCreationSymbols(IMonitorTemplate)
  */
 public class StrategyC<M extends IMonitor<M,L>,L,K,V> extends StrategyCPlus<M,L,K,V> {
 
 	public StrategyC(IMonitorTemplate<M,L,K,V> template) {
-		super(template);
+		super(template,template.getAlphabet().asSet());
 	}
 	
-	@Override
-	protected Set<ISymbol<L>> computeCreationSymbols(IMonitorTemplate<M,L,K,V> template) {
-		Set<ISymbol<L>> res = new HashSet<ISymbol<L>>();
-		for(ISymbol<L> sym: template.getAlphabet()) {
-			res.add(sym);
-		}
-		return res;
-	}
 	
 }

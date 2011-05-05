@@ -1,5 +1,7 @@
 package de.bodden.mopbox.generic;
 
+import java.util.Set;
+
 
 /**
  * An {@link IAlphabet} is the set of symbols that makes up the alphabet over which
@@ -22,4 +24,9 @@ public interface IAlphabet<L> extends Iterable<ISymbol<L>> {
 	 * Returns the number of symbols in this alphabet.
 	 */
 	public int size();
+	
+	/**
+	 * Returns a read-only set representation of this alphabet.
+	 */
+	public Set<ISymbol<L>> asSet();
 }
