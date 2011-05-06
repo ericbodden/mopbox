@@ -9,8 +9,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.IMonitorTemplate;
-import de.bodden.mopbox.generic.indexing.IndexingStrategyFactory;
-import de.bodden.mopbox.generic.indexing.StrategyB;
+import de.bodden.mopbox.generic.indexing.simple.IndexingStrategyFactory;
+import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 
 /**
  * An abstract super class for JUnit tests of this library.

@@ -4,7 +4,7 @@ import test.AllTests;
 import de.bodden.mopbox.finitestate.AbstractFSMMonitorTemplate;
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.IVariableBinding;
-import de.bodden.mopbox.generic.indexing.IndexingStrategyFactory;
+import de.bodden.mopbox.generic.indexing.simple.IndexingStrategyFactory;
 
 /**
  * An {@link AbstractFSMMonitorTemplate} with special functionality for supporting JUnit tests.

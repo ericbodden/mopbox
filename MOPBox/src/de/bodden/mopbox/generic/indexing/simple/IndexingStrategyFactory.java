@@ -1,4 +1,4 @@
-package de.bodden.mopbox.generic.indexing;
+package de.bodden.mopbox.generic.indexing.simple;
 
 import java.lang.reflect.Constructor;
 
