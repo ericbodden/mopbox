@@ -15,7 +15,8 @@ import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
  * This strategy is known as Algorithm C+ in the ASE paper of Feng Chen at al.
- * 
+ * Opposed to {@link StrategyC}, it requires the presence of <i>creation symbols</i>.
+ * Such symbols need to be explicitly declared.
  */
 public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
