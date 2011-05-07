@@ -1,5 +1,6 @@
 package de.bodden.mopbox.generic.def;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,6 +59,15 @@ public class Alphabet<L,K> implements IAlphabet<L,K> {
 	@Override
 	public Set<ISymbol<L,K>> asSet() {
 		return Collections.unmodifiableSet(backingSet);
+	}
+
+	@Override
+	public Set<K> variables() {
+		Set<K> res = new HashSet<K>();
+		for (ISymbol<L, K> sym : this) {
+			res.addAll(Arrays.asList(sym.getVariables()));
+		}
+		return res;
 	}
 	
 }

@@ -5,7 +5,7 @@ import java.util.Set;
 
 /**
  * An {@link IAlphabet} is the set of symbols that makes up the alphabet over which
- * a monitor is evaluated. 
+ * a monitor is evaluated. Symbols can declare the variables they bind.
  * @param <L> The type of objects that symbols are labeled with.
  * @param <K> The type of keys used for variable bindings.
  */
@@ -30,7 +30,13 @@ public interface IAlphabet<L,K> extends Iterable<ISymbol<L,K>> {
 	public int size();
 	
 	/**
+	 * Returns the union of all variables bound by all symbols of this alphabet.
+	 */
+	public Set<K> variables();
+
+	/**
 	 * Returns a read-only set representation of this alphabet.
 	 */
 	public Set<ISymbol<L,K>> asSet();
+	
 }
