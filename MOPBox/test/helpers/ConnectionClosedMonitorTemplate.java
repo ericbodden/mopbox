@@ -1,18 +1,22 @@
 package helpers;
 
+import static helpers.ConnectionClosedMonitorTemplate.Var.C;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
+import helpers.ConnectionClosedMonitorTemplate.Var;
 
 /**
  * This is a concrete monitor template for the following regular-expression property:
  * <code>close+(c) write(c)</code> 
  */
-public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
+public class ConnectionClosedMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,Var,Object> {
 
+	public enum Var { C }
+	
 	@Override
-	protected void fillAlphabet(IAlphabet<String,String> a) {
-		a.makeNewSymbol("close");
-		a.makeNewSymbol("write");
+	protected void fillAlphabet(IAlphabet<String,Var> a) {
+		a.makeNewSymbol("close", C);
+		a.makeNewSymbol("write", C);
 	}
 
 	protected State<String> setupStatesAndTransitions() {

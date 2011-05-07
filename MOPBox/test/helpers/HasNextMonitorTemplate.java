@@ -1,18 +1,22 @@
 package helpers;
 
+import static helpers.HasNextMonitorTemplate.Var.I;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
+import helpers.HasNextMonitorTemplate.Var;
 
 /**
  * This is a concrete monitor template for the following regular-expression property:
  * <code>next(i) next(i)</code> over the alphabet <code>{hasNext, next}</code> 
  */
-public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
+public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,Var,Object> {
 
+	public enum Var { I }
+	
 	@Override
-	protected void fillAlphabet(IAlphabet<String,String> a) {
-		a.makeNewSymbol("hasNext");
-		a.makeNewSymbol("next");
+	protected void fillAlphabet(IAlphabet<String,Var> a) {
+		a.makeNewSymbol("hasNext", I);
+		a.makeNewSymbol("next", I);
 	}
 	
 	protected State<String> setupStatesAndTransitions() {

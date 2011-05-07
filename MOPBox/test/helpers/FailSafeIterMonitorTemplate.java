@@ -1,19 +1,24 @@
 package helpers;
 
+import static helpers.FailSafeIterMonitorTemplate.Var.C;
+import static helpers.FailSafeIterMonitorTemplate.Var.I;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
+import helpers.FailSafeIterMonitorTemplate.Var;
 
 /**
  * This is a concrete monitor template for the following regular-expression property:
  * <code>create(c,i) update(c)* iter(i)+ update(c)+ iter(i)</code> 
  */
-public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
+public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,Var,Object> {
 
+	public enum Var{ C, I }
+	
 	@Override
-	protected void fillAlphabet(IAlphabet<String,String> a) {
-		a.makeNewSymbol("create");
-		a.makeNewSymbol("update");
-		a.makeNewSymbol("iter");
+	protected void fillAlphabet(IAlphabet<String,Var> a) {
+		a.makeNewSymbol("create", C, I);
+		a.makeNewSymbol("update", C);
+		a.makeNewSymbol("iter", I);
 	}
 	
 	protected State<String> setupStatesAndTransitions() {

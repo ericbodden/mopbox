@@ -13,7 +13,7 @@ import de.bodden.mopbox.generic.indexing.simple.StrategyC;
 @Suite.SuiteClasses({
   ConnectionClosed.class,
   FailSafeIter.class,
-  ASyncContainsAll.class,
+//  ASyncContainsAll.class, currently disabled due to complicated events/var bindings
   HasNext.class
 })
 public class AllTests {

@@ -18,10 +18,11 @@ import de.bodden.mopbox.generic.indexing.simple.StrategyB;
  * 
  * Also provides methods to record and report timing information.
  */
-public abstract class AbstractTest {
+public abstract class AbstractTest<V> {
 	
-	protected final static IndexingStrategyFactory<String,String,Object> factory = new IndexingStrategyFactory<String,String,Object>();
-	protected AbstractFSMMonitorTestTemplate<String,String,Object> template;
+	@SuppressWarnings("rawtypes")
+	protected final static IndexingStrategyFactory factory = new IndexingStrategyFactory();
+	protected AbstractFSMMonitorTestTemplate<String,V,Object> template;
 	
 	private long before;
 	
@@ -33,7 +34,7 @@ public abstract class AbstractTest {
 	/**
 	 * Subclasses must implement this method to return the concrete monitor template that is to be used.
 	 */
-	protected abstract AbstractFSMMonitorTestTemplate<String,String,Object> makeTemplate();
+	protected abstract AbstractFSMMonitorTestTemplate<String,V,Object> makeTemplate();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Parameters
