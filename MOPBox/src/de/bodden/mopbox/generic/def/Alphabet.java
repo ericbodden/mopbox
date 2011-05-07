@@ -13,19 +13,20 @@ import de.bodden.mopbox.generic.ISymbol;
  * Symbols are indexed, starting at 0.
  *
  * @param <L> The type of labels used to label symbols of this alphabet.
- */
-public class Alphabet<L> implements IAlphabet<L> {
+ * @param <K> The type of keys used for variable bindings.
+*/
+public class Alphabet<L,K> implements IAlphabet<L,K> {
 
 	private int nextSymbolIndex = 0;
-	private HashSet<ISymbol<L>> backingSet = new HashSet<ISymbol<L>>();
+	private HashSet<ISymbol<L,K>> backingSet = new HashSet<ISymbol<L,K>>();
 
 	/**
 	 * Creates a new symbol for the given label, adding the symbol to this
 	 * alphabet.
 	 */
 	@Override
-	public ISymbol<L> makeNewSymbol(L label) {
-		Symbol<L> symbol = new Symbol<L>(label,nextSymbolIndex++);
+	public ISymbol<L,K> makeNewSymbol(L label, K... variables) {
+		Symbol<L,K> symbol = new Symbol<L,K>(nextSymbolIndex++,label,variables);
 		backingSet.add(symbol);
 		return symbol;
 	}
@@ -35,8 +36,8 @@ public class Alphabet<L> implements IAlphabet<L> {
 	 * TODO speed this up or avoid altogether - is called at every event!
 	 */
 	@Override
-	public ISymbol<L> getSymbolByLabel(L label) {
-		for (ISymbol<L> sym : this) {
+	public ISymbol<L,K> getSymbolByLabel(L label) {
+		for (ISymbol<L,K> sym : this) {
 			if(sym.getLabel().equals(label)) {
 				return sym;
 			}
@@ -45,7 +46,7 @@ public class Alphabet<L> implements IAlphabet<L> {
 	}
 
 	@Override
-	public Iterator<ISymbol<L>> iterator() {
+	public Iterator<ISymbol<L,K>> iterator() {
 		return backingSet.iterator();
 	}
 
@@ -55,7 +56,7 @@ public class Alphabet<L> implements IAlphabet<L> {
 	}
 
 	@Override
-	public Set<ISymbol<L>> asSet() {
+	public Set<ISymbol<L,K>> asSet() {
 		return Collections.unmodifiableSet(backingSet);
 	}
 	

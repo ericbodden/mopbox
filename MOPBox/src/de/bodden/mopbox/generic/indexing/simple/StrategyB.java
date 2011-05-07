@@ -22,21 +22,25 @@ import de.bodden.mopbox.generic.def.VariableBinding;
 public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
 	@SuppressWarnings("rawtypes")
-	protected static final IVariableBinding EMPTY_BINDING = new VariableBinding();
+	private static final IVariableBinding EMPTY_BINDING = new VariableBinding();
+	
+	@SuppressWarnings("unchecked")
+	protected IVariableBinding<K,V> emptyBinding() {
+		return EMPTY_BINDING;
+	}
 	
 	private Map<IVariableBinding<K,V>,M> bindingToMonitor;
 
 	private final IMonitorTemplate<M,L,K,V> template;
 	
-	@SuppressWarnings("unchecked")
 	public StrategyB(IMonitorTemplate<M,L,K,V> template) {
 		this.template = template;
 		bindingToMonitor = new HashMap<IVariableBinding<K,V>, M>();		
-		bindingToMonitor.put(EMPTY_BINDING, template.createMonitorPrototype());		
+		bindingToMonitor.put(emptyBinding(), template.createMonitorPrototype());		
 	}
 
 	@Override
-	public void processEvent(ISymbol<L> symbol, IVariableBinding<K, V> bind){
+	public void processEvent(ISymbol<L,K> symbol, IVariableBinding<K, V> bind){
 		Set<IVariableBinding<K,V>> joins = new HashSet<IVariableBinding<K,V>>();
 		for(IVariableBinding<K,V> storedBinding: bindingToMonitor.keySet()) {
 			if(storedBinding.isCompatibleWith(bind)) {

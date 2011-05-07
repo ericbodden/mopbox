@@ -28,6 +28,6 @@ public interface IIndexingStrategy<L,K,V> {
 	 * @param symbol The symbol of the event.
 	 * @param binding The variable binding at this event.
 	 */
-	void processEvent(ISymbol<L> symbol, IVariableBinding<K, V> bind);
+	void processEvent(ISymbol<L,K> symbol, IVariableBinding<K,V> bind);
 
 }

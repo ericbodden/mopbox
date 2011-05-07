@@ -7,7 +7,7 @@ import de.bodden.mopbox.generic.ISymbol;
 /**
  * This class represents a symbol. A symbol is member of an alphabet
  * which a monitor is evaluated over. Symbols can not only be labeled with
- * Strings but also with other Objects of the generic Type T.
+ * Strings but also with other Objects of the generic Type L.
  * 
  * Symbols are indexed, usually starting at 0. Clients can exploit this 
  * for efficiency.
@@ -15,33 +15,42 @@ import de.bodden.mopbox.generic.ISymbol;
  * Symbols are not usually created directly but by calling
  * {@link IAlphabet#makeNewSymbol(Object)}
  * 
- * @param <T> The type to use as label for a symbol. Often {@link String}.
+ * @param <L> The type to use as label for a symbol. Often {@link String}.
+ * @param <K> The type of keys used for variable bindings.
  */
-public class Symbol<T> implements ISymbol<T> {
+public class Symbol<L,K> implements ISymbol<L,K> {
 	
-	private int uniqueNumber;
+	private final int uniqueNumber;
 	
-	private T label;
+	private final L label;
+
+	private final K[] variables;
 
 	/**
 	 * Symbols are not usually created directly but by calling
 	 * {@link AbstractMonitorTemplate#makeNewSymbol}
 	 */
-	public Symbol(T label, int uniqueNumber) {
+	public Symbol(int uniqueNumber, L label, K... variables) {
 		this.uniqueNumber = uniqueNumber;
 		this.label = label;
+		this.variables = variables;
 	}
 
 	public int getIndex() {
 		return uniqueNumber;
 	}
 	
-	public T getLabel() {
+	public L getLabel() {
 		return label;
 	}
 
 	@Override
 	public String toString() {
 		return getLabel().toString();
+	}
+
+	@Override
+	public K[] getVariables() {
+		return variables;
 	}
 }

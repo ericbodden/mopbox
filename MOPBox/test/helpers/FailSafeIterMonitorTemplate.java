@@ -10,7 +10,7 @@ import de.bodden.mopbox.generic.IAlphabet;
 public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,String,Object> {
 
 	@Override
-	protected void fillAlphabet(IAlphabet<String> a) {
+	protected void fillAlphabet(IAlphabet<String,String> a) {
 		a.makeNewSymbol("create");
 		a.makeNewSymbol("update");
 		a.makeNewSymbol("iter");

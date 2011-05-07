@@ -20,12 +20,12 @@ public interface IState<S extends IState<S,L>,L> extends Cloneable {
 	 * @param sym The {@link ISymbol} which the transition is labeled with.
 	 * @param succ The transition's target state.
 	 */
-	public void addTransition(ISymbol<L> sym, S succ);
+	public void addTransition(ISymbol<L,?> sym, S succ);
 
 	/**
 	 * Retrieves the successor state for the given symbol. 
 	 */
-	public IState<S,L> successor(ISymbol<L> sym);
+	public IState<S,L> successor(ISymbol<L,?> sym);
 	
 	/**
 	 * Returns <code>true</code> if this state is final. During evaluation,

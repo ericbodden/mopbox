@@ -12,7 +12,7 @@ import de.bodden.mopbox.generic.IVariableBinding;
  * This is an abstract super class for {@link IMonitorTemplate}s of finite-state runtime monitors.
  * It provides methods to create states, and to compute statistics over the finite-state machine.
  *
- * @param <L> The type of labels used at transitions.
+ * @param <L,K> The type of labels used at transitions.
  * @param <K> The type of keys used in {@link IVariableBinding}s.
  * @param <V> The type of values used in {@link IVariableBinding}s.
  */
@@ -30,9 +30,9 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	 * either (a) leads to a non-initial state or (b) leads to no state at all,
 	 * i.e., prevents a match.  
 	 */
-	public Set<ISymbol<L>> computeCreationSymbols() {
-		Set<ISymbol<L>> creationSyms = new HashSet<ISymbol<L>>();
-		for(ISymbol<L> s: getAlphabet()) {
+	public Set<ISymbol<L,K>> computeCreationSymbols() {
+		Set<ISymbol<L,K>> creationSyms = new HashSet<ISymbol<L,K>>();
+		for(ISymbol<L,K> s: getAlphabet()) {
 			State<L> target = initialState().targetFor(s);
 			if(target==null || !target.equals(initialState())){
 				creationSyms.add(s);

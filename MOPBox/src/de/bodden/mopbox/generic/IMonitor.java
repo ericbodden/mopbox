@@ -20,7 +20,7 @@ public interface IMonitor<M extends IMonitor<M,L>,L> {
 	 * 
 	 * @return <code>true</code> if a final state was reached
 	 */
-	boolean processEvent(ISymbol<L> iSymbol);
+	boolean processEvent(ISymbol<L,?> iSymbol);
 	
 	/**
 	 * Creates a deep copy of this monitor.

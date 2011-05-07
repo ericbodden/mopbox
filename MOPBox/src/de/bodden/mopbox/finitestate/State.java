@@ -13,7 +13,7 @@ public class State<L> implements IState<State<L>,L> {
 	private final String label;//for display purposes only
 	
 	@SuppressWarnings("unchecked")
-	public State(IAlphabet<L> alphabet, boolean isFinal, String label){
+	public State(IAlphabet<L,?> alphabet, boolean isFinal, String label){
 		this.isFinal = isFinal;
 		this.label = label;
 		successorTable = new State[alphabet.size()];
@@ -22,7 +22,7 @@ public class State<L> implements IState<State<L>,L> {
 	/* (non-Javadoc)
 	 * @see de.bodden.mopbox.impl.IState#registerSuccessor(de.bodden.mopbox.impl.Symbol, de.bodden.mopbox.impl.IState)
 	 */
-	public void addTransition(ISymbol<L> sym, State<L> succ) {
+	public void addTransition(ISymbol<L,?> sym, State<L> succ) {
 		assert successorTable[sym.getIndex()]==null : "successor already set";
 		successorTable[sym.getIndex()] = succ;
 	}
@@ -30,7 +30,7 @@ public class State<L> implements IState<State<L>,L> {
 	/* (non-Javadoc)
 	 * @see de.bodden.mopbox.impl.IState#successor(de.bodden.mopbox.impl.Symbol)
 	 */
-	public State<L> successor(ISymbol<L> sym) {
+	public State<L> successor(ISymbol<L,?> sym) {
 		return successorTable[sym.getIndex()];
 	}
 
@@ -57,7 +57,7 @@ public class State<L> implements IState<State<L>,L> {
 		return s;
 	}
 
-	public State<L> targetFor(ISymbol<L> s) {
+	public State<L> targetFor(ISymbol<L,?> s) {
 		return successorTable[s.getIndex()];
 	}
 }

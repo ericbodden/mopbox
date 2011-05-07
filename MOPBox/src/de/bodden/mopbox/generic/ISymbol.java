@@ -12,11 +12,14 @@ package de.bodden.mopbox.generic;
  * array-based implementations. 
  * 
  * @param <L> The type to use as label for a symbol. Often {@link String}.
+ * @param <K> The type of keys used for variable bindings.
  */
-public interface ISymbol<L> {
+public interface ISymbol<L,K> {
 
 	int getIndex();
 
 	L getLabel();
+	
+	K[] getVariables();
 	
 }

@@ -9,13 +9,13 @@ import de.bodden.mopbox.generic.def.Alphabet;
  * e.g. finite-state machine vs. something different. 
  *
  * @param <M> The concrete monitor type.
- * @param <L> The type of labels that this monitor uses at transitions.
+ * @param <L,V> The type of labels that this monitor uses at transitions.
  * @param <K> The type of keys used for the variable bindings.
  * @param <V> The type of values used for the variable bindings.
  */
 public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> implements IMonitorTemplate<M,L,K,V> {
 
-	private final IAlphabet<L> alphabet;
+	private final IAlphabet<L,K> alphabet;
 
 	private final IIndexingStrategy<L,K,V> indexingStrategy;
 	
@@ -28,8 +28,8 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	/**
 	 * Subclasses may override this method to create a custom kind of alphabet. 
 	 */
-	protected IAlphabet<L> createAlphabet() {
-		return new Alphabet<L>();
+	protected IAlphabet<L,K> createAlphabet() {
+		return new Alphabet<L,K>();
 	}
 	
 	/**
@@ -43,9 +43,9 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * {@link IAlphabet#makeNewSymbol(Object)}.
 	 * Symbols can then be looked up from the alphabet by using {@link #getSymbolByLabel(Object)}.
 	 */
-	protected abstract void fillAlphabet(IAlphabet<L> alphabet);
+	protected abstract void fillAlphabet(IAlphabet<L,K> alphabet);
 	
-	public IAlphabet<L> getAlphabet() {
+	public IAlphabet<L,K> getAlphabet() {
 		return alphabet;
 	}
 
@@ -56,14 +56,14 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * @see de.bodden.mopbox.generic.IMonitorTemplate#processEvent(de.bodden.mopbox.generic.IEvent)
 	 */
 	@Override
-	public void processEvent(L label, IVariableBinding<K, V> binding){
+	public void processEvent(L label, IVariableBinding<K,V> binding){
 		indexingStrategy.processEvent(getSymbolByLabel(label), binding);
 	}
 	
 	/**
 	 * Retrieves a symbol by its label.
 	 */
-	public ISymbol<L> getSymbolByLabel(L label) {
+	public ISymbol<L,K> getSymbolByLabel(L label) {
 		return alphabet.getSymbolByLabel(label);
 	}
 }

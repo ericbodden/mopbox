@@ -30,9 +30,9 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 
 	protected final IMonitorTemplate<M,L,K,V> template;
 
-	protected Set<ISymbol<L>> creationSymbols;
+	protected Set<ISymbol<L,K>> creationSymbols;
 	
-	public StrategyCPlus(IMonitorTemplate<M,L,K,V> template, Set<ISymbol<L>> creationSymbols) {
+	public StrategyCPlus(IMonitorTemplate<M,L,K,V> template, Set<ISymbol<L,K>> creationSymbols) {
 		if(DEBUG) {
 			System.err.println();
 			System.err.println();
@@ -46,7 +46,7 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 	}
 
 	@Override
-	public void processEvent(ISymbol<L> symbol, IVariableBinding<K, V> bind){
+	public void processEvent(ISymbol<L,K> symbol, IVariableBinding<K, V> bind){
 		M currentMonitor = bindingToMonitor.get(bind);
 		boolean undefined = (currentMonitor==null);
 		if(undefined) { //line 1

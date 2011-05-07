@@ -8,7 +8,6 @@ import de.bodden.mopbox.generic.ISymbol;
  * Invocations of the {@link #processEvent(ISymbol)} method cause a simple state transition.
  * 
  * @param <M>
- * @param <L>
  */
 public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> implements IMonitor<M,L>, Cloneable {
 
@@ -22,7 +21,7 @@ public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> im
 	 * @see IMonitor#processEvent(ISymbol)
 	 */
 	@Override
-	public boolean processEvent(ISymbol<L> s) {
+	public boolean processEvent(ISymbol<L,?> s) {
 		if(currentState!=null)
 			currentState = currentState.successor(s);
 		if(currentState!=null && currentState.isFinal()) {			
