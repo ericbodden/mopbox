@@ -5,13 +5,14 @@ import java.util.Map;
 import org.apache.commons.collections15.map.AbstractReferenceMap;
 import org.apache.commons.collections15.map.ReferenceIdentityMap;
 
-import de.bodden.mopbox.generic.indexing.fast.WeakIdentityMultiKey;
+import de.bodden.mopbox.generic.indexing.fast.WeakIdentityMultiMap;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class PerfTest {
 	
 	private static final int MAX = 100000;
 	static Map map = new ReferenceIdentityMap(AbstractReferenceMap.WEAK, AbstractReferenceMap.HARD);
+	static WeakIdentityMultiMap weakMap = new WeakIdentityMultiMap();
 	
 	public static void main(String[] args) {
 		{
@@ -24,10 +25,12 @@ public class PerfTest {
 				associate(o1,o2,o3);
 			}
 			System.err.println("Nested: "+(System.currentTimeMillis()-before));
+			System.gc();
+			long mem = Runtime.getRuntime().maxMemory()-Runtime.getRuntime().freeMemory();
+			System.err.println("used mem: "+mem);
 		}
 		
 		{
-			map.clear();
 			long before = System.currentTimeMillis();
 			for(int i=0;i<MAX;i++) {
 				Object o1 = new Object();
@@ -36,6 +39,11 @@ public class PerfTest {
 				associateMultiKey(o1,o2,o3);
 			}
 			System.err.println("Multi-Key: "+(System.currentTimeMillis()-before));
+			System.err.println("size: "+weakMap.size());
+			System.gc();
+			long mem = Runtime.getRuntime().maxMemory()-Runtime.getRuntime().freeMemory();
+			System.err.println("used mem: "+mem);
+			System.err.println("size: "+weakMap.size());
 		}
 	}
 
@@ -48,8 +56,7 @@ public class PerfTest {
 		map2.put(o2, o3);
 	}
 
-	private static void associateMultiKey(Object o, Object o2, Object o3) {
-		WeakIdentityMultiKey<Object> key = new WeakIdentityMultiKey<Object>(o,o2);
-		map.put(key, o3);
+	private static void associateMultiKey(Object o, Object o2, Object o3) {		
+		weakMap.put(o3, o, o2);
 	}
 }
