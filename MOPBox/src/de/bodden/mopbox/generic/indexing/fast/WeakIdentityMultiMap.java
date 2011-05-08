@@ -18,44 +18,64 @@ import java.util.Map;
  */
 public class WeakIdentityMultiMap<K, V> {
 	
-	protected final Map<WeakIdentityMultiKey,V> backingMap
-		= new HashMap<WeakIdentityMultiKey, V>();
+	protected final Map<WeakIdentityMultiKey,V> backingMap;
 	
 	protected final ReferenceQueue<K> refQueue = new ReferenceQueue<K>();
 	
 	protected final int PURGE_EVERY_X_CYCLES=100;
 	
 	protected int cycles = 0; 
+	
+	public WeakIdentityMultiMap() {
+		this(16);
+	}
+	
+	public WeakIdentityMultiMap(int initialCapacity) {
+		this(initialCapacity, 0.75f);
+	}
+
+	public WeakIdentityMultiMap(int initialCapacity, float loadFactor) {
+		backingMap = new HashMap<WeakIdentityMultiKey, V>(initialCapacity, loadFactor);
+	}
 
 	public V put(V value, K... keys) {
-		purgeExpiredEntries();
+		maybePurgeExpiredEntries();
 		WeakIdentityMultiKey multiKey = new WeakIdentityMultiKey(keys);
 		return backingMap.put(multiKey, value);
 	}
 	
 	public V get(K... keys) {
-		purgeExpiredEntries();
+		maybePurgeExpiredEntries();
 		WeakIdentityMultiKey multiKey = new WeakIdentityMultiKey(keys);
 		return backingMap.get(multiKey);
 	}
 	
 	public boolean containsKey(K... keys) {
-		purgeExpiredEntries();
+		maybePurgeExpiredEntries();
 		WeakIdentityMultiKey multiKey = new WeakIdentityMultiKey(keys);
 		return backingMap.containsKey(multiKey);
 	}
 	
 	public V remove(K... keys) {
-		purgeExpiredEntries();
+		maybePurgeExpiredEntries();
 		WeakIdentityMultiKey multiKey = new WeakIdentityMultiKey(keys);
 		return backingMap.remove(multiKey);
 	}
+	
+	public int size() {
+		maybePurgeExpiredEntries();
+		return backingMap.size();
+	}
 
-	@SuppressWarnings("unchecked")
-	protected void purgeExpiredEntries() {
-		//purge only every PURGE_EVERY_X_CYCLES cyles
+	protected void maybePurgeExpiredEntries() {
+		//purge only every PURGE_EVERY_X_CYCLES cycles
 		if((cycles++) % PURGE_EVERY_X_CYCLES != 0) return;
 		
+		purgeExpiredEntries();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void purgeExpiredEntries() {
 		WeakReferenceWithBacklink<K> ref;
 		while((ref = (WeakReferenceWithBacklink<K>) refQueue.poll())!=null) {
 			WeakIdentityMultiKey owningMultiKey = ref.getOwningMultiKey();
