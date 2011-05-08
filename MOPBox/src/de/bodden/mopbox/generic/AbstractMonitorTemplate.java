@@ -1,5 +1,8 @@
 package de.bodden.mopbox.generic;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.bodden.mopbox.generic.def.Alphabet;
 
 
@@ -29,9 +32,17 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * Subclasses may override this method to create a custom kind of alphabet. 
 	 */
 	protected IAlphabet<L,K> createAlphabet() {
-		return new Alphabet<L,K>();
+		Set<K> set = new HashSet<K>();
+		fillVariables(set);
+		return new Alphabet<L,K>(set);
 	}
 	
+	/**
+	 * Subclasses must override this method to fill in the set of variables
+	 * used by symbols of this alphabet. 
+	 */
+	protected abstract void fillVariables(Set<K> variables);
+
 	/**
 	 * Creates and returns this template's {@link IIndexingStrategy}. Subclasses
 	 * must implement this method, choosing a concrete strategy.
@@ -57,6 +68,9 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 */
 	@Override
 	public void processEvent(L label, IVariableBinding<K,V> binding){
+		assert alphabet.variables().containsAll(binding.keySet()):
+			"Event has undefined variables: "+binding+" vs. "+alphabet;
+		
 		indexingStrategy.processEvent(getSymbolByLabel(label), binding);
 	}
 	

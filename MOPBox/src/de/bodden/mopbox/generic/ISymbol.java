@@ -22,4 +22,6 @@ public interface ISymbol<L,K> {
 	
 	K[] getVariables();
 	
+	int getBindingIndex();
+	
 }

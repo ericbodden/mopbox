@@ -1,5 +1,6 @@
 package de.bodden.mopbox.generic;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -30,9 +31,9 @@ public interface IAlphabet<L,K> extends Iterable<ISymbol<L,K>> {
 	public int size();
 	
 	/**
-	 * Returns the union of all variables bound by all symbols of this alphabet.
+	 * Returns all variables declared for this alphabet.
 	 */
-	public Set<K> variables();
+	public List<K> variables();
 
 	/**
 	 * Returns a read-only set representation of this alphabet.

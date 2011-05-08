@@ -2,6 +2,10 @@ package helpers;
 
 import static helpers.FailSafeIterMonitorTemplate.Var.C;
 import static helpers.FailSafeIterMonitorTemplate.Var.I;
+
+import java.util.Arrays;
+import java.util.Set;
+
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
 import helpers.FailSafeIterMonitorTemplate.Var;
@@ -13,7 +17,12 @@ import helpers.FailSafeIterMonitorTemplate.Var;
 public class FailSafeIterMonitorTemplate extends AbstractFSMMonitorTestTemplate<String,Var,Object> {
 
 	public enum Var{ C, I }
-	
+
+	@Override
+	protected void fillVariables(Set<Var> variables) {
+		variables.addAll(Arrays.asList(Var.values()));
+	}
+
 	@Override
 	protected void fillAlphabet(IAlphabet<String,Var> a) {
 		a.makeNewSymbol("create", C, I);

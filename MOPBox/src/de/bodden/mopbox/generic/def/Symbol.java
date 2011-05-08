@@ -26,14 +26,17 @@ public class Symbol<L,K> implements ISymbol<L,K> {
 
 	private final K[] variables;
 
+	private final int bindingIndex;
+
 	/**
 	 * Symbols are not usually created directly but by calling
 	 * {@link AbstractMonitorTemplate#makeNewSymbol}
 	 */
-	public Symbol(int uniqueNumber, L label, K... variables) {
+	public Symbol(int uniqueNumber, L label, int bindingIndex, K... variables) {
 		this.uniqueNumber = uniqueNumber;
 		this.label = label;
 		this.variables = variables;
+		this.bindingIndex = bindingIndex;
 	}
 
 	public int getIndex() {
@@ -52,5 +55,9 @@ public class Symbol<L,K> implements ISymbol<L,K> {
 	@Override
 	public K[] getVariables() {
 		return variables;
+	}
+	
+	public int getBindingIndex() {
+		return bindingIndex;
 	}
 }

@@ -1,6 +1,10 @@
 package helpers;
 
 import static helpers.HasNextMonitorTemplate.Var.I;
+
+import java.util.Arrays;
+import java.util.Set;
+
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
 import helpers.HasNextMonitorTemplate.Var;
@@ -13,6 +17,11 @@ public class HasNextMonitorTemplate extends AbstractFSMMonitorTestTemplate<Strin
 
 	public enum Var { I }
 	
+	@Override
+	protected void fillVariables(Set<Var> variables) {
+		variables.addAll(Arrays.asList(Var.values()));
+	}
+
 	@Override
 	protected void fillAlphabet(IAlphabet<String,Var> a) {
 		a.makeNewSymbol("hasNext", I);

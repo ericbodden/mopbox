@@ -1,9 +1,11 @@
 package de.bodden.mopbox.generic.def;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import de.bodden.mopbox.generic.IAlphabet;
@@ -20,6 +22,11 @@ public class Alphabet<L,K> implements IAlphabet<L,K> {
 
 	private int nextSymbolIndex = 0;
 	private HashSet<ISymbol<L,K>> backingSet = new HashSet<ISymbol<L,K>>();
+	private final List<K> variables;
+	
+	public Alphabet(Set<K> variables) {
+		this.variables = new ArrayList<K>(variables);		
+	}
 
 	/**
 	 * Creates a new symbol for the given label, adding the symbol to this
@@ -27,7 +34,18 @@ public class Alphabet<L,K> implements IAlphabet<L,K> {
 	 */
 	@Override
 	public ISymbol<L,K> makeNewSymbol(L label, K... variables) {
-		Symbol<L,K> symbol = new Symbol<L,K>(nextSymbolIndex++,label,variables);
+		assert variables().containsAll(Arrays.asList(variables)):
+			"Symbol uses undefined variables: "+Arrays.asList(variables)+" vs. "+variables();
+		
+		/* Compute the binding index. This index must be unique to the particular subset of
+		 * variables this symbol binds.
+		 */
+		int bindingIndex = 0;
+		for(K var: variables) {
+			bindingIndex |= (1 << variables().indexOf(var));
+		}
+		
+		Symbol<L,K> symbol = new Symbol<L,K>(nextSymbolIndex++,label,bindingIndex,variables);
 		backingSet.add(symbol);
 		return symbol;
 	}
@@ -62,12 +80,8 @@ public class Alphabet<L,K> implements IAlphabet<L,K> {
 	}
 
 	@Override
-	public Set<K> variables() {
-		Set<K> res = new HashSet<K>();
-		for (ISymbol<L, K> sym : this) {
-			res.addAll(Arrays.asList(sym.getVariables()));
-		}
-		return res;
+	public List<K> variables() {
+		return variables;
 	}
 	
 }
