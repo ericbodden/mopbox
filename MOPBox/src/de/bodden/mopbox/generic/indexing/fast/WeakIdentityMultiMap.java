@@ -67,6 +67,7 @@ public class WeakIdentityMultiMap<K, V> {
 					}
 				}
 			};
+			purger.setPriority(Thread.NORM_PRIORITY-1);
 			purger.setDaemon(true);
 			purger.start();
 		} else {
