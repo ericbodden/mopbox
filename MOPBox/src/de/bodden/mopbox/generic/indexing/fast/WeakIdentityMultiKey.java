@@ -9,7 +9,7 @@ public class WeakIdentityMultiKey<K> {
 	
 	@SuppressWarnings("unchecked")
 	public WeakIdentityMultiKey(K... keys) {
-		int hash = 0;
+		int hash = 2011; //a prime number
 		keyRefs = new WeakReference[keys.length];
 		for(int i=0;i<keys.length;i++) {
 			keyRefs[i] = new WeakReference<K>(keys[i]);
