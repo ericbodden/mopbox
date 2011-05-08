@@ -2,8 +2,8 @@ package de.bodden.mopbox.generic.indexing.fast;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is a map that maps from a vector of multiple keys to a single value.
@@ -12,6 +12,12 @@ import java.util.Map;
  * can be garbage collected. When a key expires, i.e., is about to be garbage collected,
  * this map is notified through a {@link ReferenceQueue} and all mappings for this key
  * are automatically scheduled for removal. 
+ * 
+ * By default, expired mappings are purged in the thread that created this map.
+ * To have the mappings purged in another thread, use the constructur
+ * {@link #WeakIdentityMultiMap(int, float, boolean)}, supplying <code>true</code>.
+ * 
+ * The backing map is a {@link ConcurrentHashMap}. 
  *
  * @param <K> The type of all they keys.
  * @param <V> The value type.
@@ -22,9 +28,12 @@ public class WeakIdentityMultiMap<K, V> {
 	
 	protected final ReferenceQueue<K> refQueue = new ReferenceQueue<K>();
 	
-	protected final int PURGE_EVERY_X_CYCLES=100;
+	protected final int PURGE_EVERY_X_CYCLES;
 	
+	protected final Thread purger;
+
 	protected int cycles = 0; 
+	
 	
 	public WeakIdentityMultiMap() {
 		this(16);
@@ -35,7 +44,35 @@ public class WeakIdentityMultiMap<K, V> {
 	}
 
 	public WeakIdentityMultiMap(int initialCapacity, float loadFactor) {
-		backingMap = new HashMap<WeakIdentityMultiKey, V>(initialCapacity, loadFactor);
+		this(initialCapacity, 0.75f, false);
+	}
+	
+	public WeakIdentityMultiMap(int initialCapacity, float loadFactor, boolean purgeInSeparateThread) {
+		//TODO is this enough to make this class thread safe?
+		backingMap = new ConcurrentHashMap<WeakIdentityMultiKey, V>(initialCapacity, loadFactor);
+		if(purgeInSeparateThread) {
+			//disable purging by this thread
+			PURGE_EVERY_X_CYCLES = Integer.MAX_VALUE;			
+			purger = new Thread() {
+				@SuppressWarnings("unchecked")
+				public void run() {					
+					while(true) {
+						try {
+							WeakReferenceWithBacklink<K> ref = (WeakReferenceWithBacklink<K>) refQueue.remove();
+							WeakIdentityMultiKey owningMultiKey = ref.getOwningMultiKey();
+							backingMap.remove(owningMultiKey);
+						} catch (InterruptedException e) {
+							return;
+						}
+					}
+				}
+			};
+			purger.setDaemon(true);
+			purger.start();
+		} else {
+			PURGE_EVERY_X_CYCLES = 100;
+			purger = null;
+		}
 	}
 
 	public V put(V value, K... keys) {

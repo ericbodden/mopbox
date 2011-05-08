@@ -12,7 +12,7 @@ public class PerfTest {
 	
 	private static final int MAX = 100000;
 	static Map map = new ReferenceIdentityMap(AbstractReferenceMap.WEAK, AbstractReferenceMap.HARD);
-	static WeakIdentityMultiMap weakMap = new WeakIdentityMultiMap();
+	static WeakIdentityMultiMap weakMap = new WeakIdentityMultiMap(16,0.75f,true);
 	
 	public static void main(String[] args) {
 		{
@@ -43,6 +43,10 @@ public class PerfTest {
 			System.gc();
 			long mem = Runtime.getRuntime().maxMemory()-Runtime.getRuntime().freeMemory();
 			System.err.println("used mem: "+mem);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
 			System.err.println("size: "+weakMap.size());
 		}
 	}
