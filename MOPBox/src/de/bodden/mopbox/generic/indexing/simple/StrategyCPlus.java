@@ -17,6 +17,9 @@ import de.bodden.mopbox.generic.def.VariableBinding;
  * This strategy is known as Algorithm C+ in the ASE paper of Feng Chen at al.
  * Opposed to {@link StrategyC}, it requires the presence of <i>creation symbols</i>.
  * Such symbols need to be explicitly declared.
+ *
+ * This class obtains thread safety in a naive way, through a single lock that
+ * is held when calling {@link #processEvent(ISymbol, IVariableBinding)}.
  */
 public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
@@ -46,7 +49,7 @@ public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingSt
 	}
 
 	@Override
-	public void processEvent(ISymbol<L,K> symbol, IVariableBinding<K, V> bind){
+	public synchronized void processEvent(ISymbol<L,K> symbol, IVariableBinding<K, V> bind){
 		M currentMonitor = bindingToMonitor.get(bind);
 		boolean undefined = (currentMonitor==null);
 		if(undefined) { //line 1

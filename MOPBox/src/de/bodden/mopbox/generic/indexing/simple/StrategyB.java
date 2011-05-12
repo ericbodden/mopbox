@@ -18,6 +18,9 @@ import de.bodden.mopbox.generic.def.VariableBinding;
  * possible parameter combinations, this algorithm works in O(n*m), which
  * is pretty bad. Also, this implementation is not optimized for
  * memory consumption, i.e., it will leak memory.
+ * 
+ * This class obtains thread safety in a naive way, through a single lock that
+ * is held when calling {@link #processEvent(ISymbol, IVariableBinding)}.
  */
 public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
@@ -40,7 +43,7 @@ public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrate
 	}
 
 	@Override
-	public void processEvent(ISymbol<L,K> symbol, IVariableBinding<K, V> bind){
+	public synchronized void processEvent(ISymbol<L,K> symbol, IVariableBinding<K, V> bind){
 		Set<IVariableBinding<K,V>> joins = new HashSet<IVariableBinding<K,V>>();
 		for(IVariableBinding<K,V> storedBinding: bindingToMonitor.keySet()) {
 			if(storedBinding.isCompatibleWith(bind)) {

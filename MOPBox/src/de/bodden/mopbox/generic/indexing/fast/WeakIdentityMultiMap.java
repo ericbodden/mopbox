@@ -2,8 +2,8 @@ package de.bodden.mopbox.generic.indexing.fast;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is a map that maps from a vector of multiple keys to a single value.
@@ -14,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * are automatically scheduled for removal. 
  * 
  * By default, expired mappings are purged in the thread that created this map.
- * To have the mappings purged in another thread, use the constructur
+ * To have the mappings purged in another thread, use the constructor
  * {@link #WeakIdentityMultiMap(int, float, boolean)}, supplying <code>true</code>.
  * 
- * The backing map is a {@link ConcurrentHashMap}. 
- *
+ * <b>Note that this class is currently not thread safe!</b>
+ * 
  * @param <K> The type of all they keys.
  * @param <V> The value type.
  */
@@ -48,8 +48,7 @@ public class WeakIdentityMultiMap<K, V> {
 	}
 	
 	public WeakIdentityMultiMap(int initialCapacity, float loadFactor, boolean purgeInSeparateThread) {
-		//TODO is this enough to make this class thread safe?
-		backingMap = new ConcurrentHashMap<WeakIdentityMultiKey, V>(initialCapacity, loadFactor);
+		backingMap = new HashMap<WeakIdentityMultiKey, V>(initialCapacity, loadFactor);
 		if(purgeInSeparateThread) {
 			//disable purging by this thread
 			PURGE_EVERY_X_CYCLES = Integer.MAX_VALUE;			
