@@ -59,6 +59,7 @@ public class WeakIdentityMultiMap<K, V> {
 						try {
 							WeakReferenceWithBacklink<K> ref = (WeakReferenceWithBacklink<K>) refQueue.remove();
 							WeakIdentityMultiKey owningMultiKey = ref.getOwningMultiKey();
+							//TODO do we need synchronization here? probably yes
 							backingMap.remove(owningMultiKey);
 						} catch (InterruptedException e) {
 							return;
