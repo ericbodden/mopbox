@@ -149,4 +149,27 @@ public class VariableBinding<K,V> extends ReferenceIdentityMap<K, V> implements 
 		return sb.toString();
 	}
 	
+	//we implement equals and hashcode here
+	//so that these bindings can be used as keys in hash maps
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		if(obj.getClass()!=this.getClass()) return false;
+		IVariableBinding<K, V> other = (IVariableBinding<K, V>) obj; 
+		if(!keySet().equals(other.keySet())) return false;
+		for(K s: keySet()) {
+			V otherBinding = other.get(s);
+			if (otherBinding!=null && !equalBindings(otherBinding,get(s))) {
+				return false;
+			}
+		}
+		return true; 
+	}
+	
+	@Override
+	//FIXME better hash codes
+	public int hashCode() {
+		return 0;
+	}
+	
 }
