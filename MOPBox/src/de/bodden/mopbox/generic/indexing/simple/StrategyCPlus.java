@@ -11,7 +11,6 @@ import de.bodden.mopbox.generic.IMonitor;
 import de.bodden.mopbox.generic.IMonitorTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
-import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
  * This strategy is known as Algorithm C+ in the ASE paper of Feng Chen at al.
@@ -24,9 +23,6 @@ import de.bodden.mopbox.generic.def.VariableBinding;
 public class StrategyCPlus<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
 	private final static boolean DEBUG = false; 
-	
-	@SuppressWarnings("rawtypes")
-	protected static final IVariableBinding EMPTY_BINDING = new VariableBinding();
 	
 	protected Map<IVariableBinding<K,V>,M> bindingToMonitor;
 	protected Map<IVariableBinding<K,V>,Set<IVariableBinding<K,V>>> bindingToDefinedMoreInformativeBindings;
