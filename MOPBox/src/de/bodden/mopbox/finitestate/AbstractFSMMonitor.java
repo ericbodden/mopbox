@@ -11,7 +11,7 @@ import de.bodden.mopbox.generic.ISymbol;
  */
 public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> implements IMonitor<M,L>, Cloneable {
 
-	private State<L> currentState;
+	protected State<L> currentState;
 	
 	protected AbstractFSMMonitor(State<L> initialState) {
 		this.currentState = initialState;
@@ -53,4 +53,7 @@ public abstract class AbstractFSMMonitor<M extends AbstractFSMMonitor<M,L>,L> im
 		return currentState.toString();
 	}
 
+	public State<L> getCurrentState() {
+		return currentState;
+	}
 }
