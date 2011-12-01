@@ -54,7 +54,7 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	 * The state is wired to all other states with the given
 	 * transitions.
 	 */
-	private State<L> initialState() {
+	protected State<L> initialState() {
 		if(initialState==null) {
 			nextStateNum= 0;
 			initialState = setupStatesAndTransitions();
