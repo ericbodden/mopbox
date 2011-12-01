@@ -26,8 +26,11 @@ public abstract class OpenFSMMonitorTemplate<L, K, V> extends AbstractFSMMonitor
 	private void addStateAndSuccsToCache(State<L> s) {
 		IAlphabet<L, K> alphabet = getAlphabet();
 		if(stateCache.add(s)) {
-			for(ISymbol<L, K> sym: alphabet) 
-				addStateAndSuccsToCache(s.successor(sym));
+			for(ISymbol<L, K> sym: alphabet) {
+				State<L> succ = s.successor(sym);
+				if(succ!=null)
+					addStateAndSuccsToCache(succ);
+			}
 		}
 	}
 	
