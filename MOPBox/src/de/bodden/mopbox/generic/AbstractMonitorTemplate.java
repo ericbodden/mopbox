@@ -1,5 +1,6 @@
 package de.bodden.mopbox.generic;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,23 +19,31 @@ import de.bodden.mopbox.generic.def.Alphabet;
  */
 public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> implements IMonitorTemplate<M,L,K,V> {
 
-	private final IAlphabet<L,K> alphabet;
+	private IAlphabet<L,K> alphabet;
 
-	private final IIndexingStrategy<L,K,V> indexingStrategy;
+	private Set<K> variables = new HashSet<K>();
+
+	private IIndexingStrategy<L,K,V> indexingStrategy;
 	
-	protected AbstractMonitorTemplate() {
+	private boolean initialized = false;
+	
+	/**
+	 * Initializes the template, filling in the alphabet and creating the indexing strategy.
+	 */	
+	protected void initialize() {
 		alphabet = createAlphabet(); 
 		fillAlphabet(alphabet);
-		indexingStrategy = createIndexingStrategy();		
+		indexingStrategy = createIndexingStrategy();
+		initialized = true;
 	}
 
 	/**
 	 * Subclasses may override this method to create a custom kind of alphabet. 
 	 */
 	protected IAlphabet<L,K> createAlphabet() {
-		Set<K> set = new HashSet<K>();
-		fillVariables(set);
-		return new Alphabet<L,K>(set);
+		fillVariables(variables);
+		variables = Collections.unmodifiableSet(variables);
+		return new Alphabet<L,K>(variables);
 	}
 	
 	/**
@@ -70,8 +79,9 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	public void processEvent(L label, IVariableBinding<K,V> binding){
 		assert alphabet.variables().containsAll(binding.keySet()):
 			"Event has undefined variables: "+binding+" vs. "+alphabet;
+		assert initialized : "not initialized!";
 		
-		indexingStrategy.processEvent(getSymbolByLabel(label), binding);
+		getIndexingStrategy().processEvent(getSymbolByLabel(label), binding);
 	}
 	
 	/**
@@ -79,5 +89,16 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 */
 	public ISymbol<L,K> getSymbolByLabel(L label) {
 		return alphabet.getSymbolByLabel(label);
+	}
+	
+	/**
+	 * Returns the variables that the symbols in this monitor template bind. 
+	 */	
+	public Set<K> getVariables() {
+		return variables;
+	}
+	
+	public IIndexingStrategy<L,K,V> getIndexingStrategy() {
+		return indexingStrategy;
 	}
 }

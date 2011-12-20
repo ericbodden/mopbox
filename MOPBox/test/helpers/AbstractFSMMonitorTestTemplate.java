@@ -2,6 +2,7 @@ package helpers;
 
 import test.AllTests;
 import de.bodden.mopbox.finitestate.AbstractFSMMonitorTemplate;
+import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.IVariableBinding;
 import de.bodden.mopbox.generic.indexing.simple.IndexingStrategyFactory;
@@ -12,11 +13,15 @@ import de.bodden.mopbox.generic.indexing.simple.IndexingStrategyFactory;
  * The template records a trace. Whenever a match completed, the corresponding binding is added to the trace.
  * The trace can be retrieved via {@link #getTrace()}.
  */
-public abstract class AbstractFSMMonitorTestTemplate<L,K,V> extends AbstractFSMMonitorTemplate<L,K,V> {
+public abstract class AbstractFSMMonitorTestTemplate<L,K,V> extends OpenFSMMonitorTemplate<L,K,V> {
 	
 	@SuppressWarnings("rawtypes")
 	protected final static IndexingStrategyFactory factory = new IndexingStrategyFactory();
 	protected String trace = "";
+	
+	public AbstractFSMMonitorTestTemplate() {
+		initialize();
+	}
 	
 	@Override
 	public final void matchCompleted(IVariableBinding<K,V> binding) {

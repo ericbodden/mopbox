@@ -57,7 +57,33 @@ public class State<L> implements IState<State<L>,L> {
 		return s;
 	}
 
-	public State<L> targetFor(ISymbol<L,?> s) {
-		return successorTable[s.getIndex()];
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (isFinal ? 1231 : 1237);
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		@SuppressWarnings("rawtypes")
+		State other = (State) obj;
+		if (isFinal != other.isFinal)
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		return true;
+	}
+	
 }

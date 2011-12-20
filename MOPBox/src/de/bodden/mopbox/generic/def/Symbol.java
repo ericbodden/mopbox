@@ -60,4 +60,27 @@ public class Symbol<L,K> implements ISymbol<L,K> {
 	public int getBindingIndex() {
 		return bindingIndex;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + uniqueNumber;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		@SuppressWarnings("rawtypes")
+		Symbol other = (Symbol) obj;
+		if (uniqueNumber != other.uniqueNumber)
+			return false;
+		return true;
+	}
 }

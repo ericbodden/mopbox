@@ -33,7 +33,7 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	public Set<ISymbol<L,K>> computeCreationSymbols() {
 		Set<ISymbol<L,K>> creationSyms = new HashSet<ISymbol<L,K>>();
 		for(ISymbol<L,K> s: getAlphabet()) {
-			State<L> target = initialState().targetFor(s);
+			State<L> target = initialState().successor(s);
 			if(target==null || !target.equals(initialState())){
 				creationSyms.add(s);
 			}
