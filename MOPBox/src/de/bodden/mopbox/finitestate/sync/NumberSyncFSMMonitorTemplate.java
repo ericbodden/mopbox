@@ -6,6 +6,9 @@ import helpers.FailSafeIterMonitorTemplate.Var;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,39 +37,53 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 	protected State<NumberAndSymbol> setupStatesAndTransitions() {
 		IAlphabet<L, K> alphabet = delegate.getAlphabet();
 		
-		State<NumberAndSymbol> initialCompoundState = stateFor(Collections.singleton(delegate.getInitialState()));
-
-		for(State<L> s: delegate.getStates()) {
-			Set<State<L>> statesSeen = new HashSet<State<L>>();
-			Set<State<L>> frontier = new HashSet<State<L>>();
-			frontier.add(s);		
+		Set<Set<State<L>>> worklist = new HashSet<Set<State<L>>>();
+		worklist.add(Collections.singleton(delegate.getInitialState()));
+		
+		Set<State<NumberAndSymbol>> statesVisited = new HashSet<State<NumberAndSymbol>>();
+		
+		while(!worklist.isEmpty()){
+			//pop some element
+			Iterator<Set<State<L>>> iter = worklist.iterator();
+			Set<State<L>> currentStates = iter.next();
+			iter.remove();
 			
-			State<NumberAndSymbol> oldCompoundState = stateFor(frontier);
+			State<NumberAndSymbol> compoundState = stateFor(currentStates);
+			statesVisited.add(compoundState);
 
-			int delta = 1;
-			while(true) {
-				Set<State<L>> nextFrontier = new HashSet<State<L>>();
-				for (ISymbol<L,K> sym : alphabet) {
-					Set<State<L>> symFrontier = new HashSet<State<L>>();
-					for(State<L> curr : frontier) {
+			Set<State<L>> lastFrontier = new HashSet<State<L>>(currentStates);
+			
+			for(int delta=0; delta <= maxNumber(); delta++) {
+				Set<State<L>> newFrontier = new HashSet<State<L>>();
+				for(State<L> curr : lastFrontier) {
+					for (ISymbol<L,K> sym : alphabet) {
 						State<L> succ = curr.successor(sym);
 						if(succ!=null)
-							symFrontier.add(succ);
+							newFrontier.add(succ);
 					}
-					State<NumberAndSymbol> newCompoundState = stateFor(symFrontier);
-					oldCompoundState.addTransition(getSymbolByLabel(new NumberAndSymbol(delta,sym)), newCompoundState);
-					nextFrontier.addAll(symFrontier);
 				}
-				statesSeen.addAll(nextFrontier);
-				delta++;
-				if(!frontier.equals(nextFrontier))
-					frontier = nextFrontier;
-				else
-					break;
+				if(!newFrontier.isEmpty()) {
+					for (ISymbol<L,K> sym : alphabet) {
+						Set<State<L>> symSuccs = new HashSet<State<L>>();
+						for(State<L> curr : newFrontier) {
+							State<L> succ = curr.successor(sym);
+							if(succ!=null)
+								symSuccs.add(succ);
+						}
+						if(!symSuccs.isEmpty()) {
+							State<NumberAndSymbol> newCompoundState = stateFor(symSuccs);
+							compoundState.addTransition(getSymbolByLabel(new NumberAndSymbol(delta,sym)), newCompoundState);
+							if(!statesVisited.contains(newCompoundState)) {
+								worklist.add(symSuccs);
+							}
+						}
+					}
+				}
+				lastFrontier = newFrontier;
 			}
 		}
 				
-		return initialCompoundState;
+		return stateFor(Collections.singleton(delegate.getInitialState()));
 	}
 
 	private State<NumberAndSymbol> stateFor(Set<State<L>> set) {
@@ -104,7 +121,7 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 	@Override
 	protected void fillAlphabet(IAlphabet<NumberAndSymbol, K> alphabet) {
 		Set<ISymbol<L, K>> asSet = delegate.getAlphabet().asSet();
-		for(int number=1; number <= maxNumber(); number++) {
+		for(int number=0; number <= maxNumber(); number++) {
 			for (ISymbol<L, K> sym : asSet) {
 				alphabet.makeNewSymbol(new NumberAndSymbol(number,sym), sym.getVariables());
 			}
