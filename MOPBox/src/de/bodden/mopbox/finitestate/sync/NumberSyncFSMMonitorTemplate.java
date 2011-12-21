@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,21 +49,16 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 			State<NumberAndSymbol> compoundState = stateFor(currentStates);
 			statesVisited.add(compoundState);
 
-			Set<State<L>> lastFrontier = new HashSet<State<L>>(currentStates);
+			Set<State<L>> nextFrontier = new HashSet<State<L>>(currentStates);
+			Set<State<L>> frontier;
 			
-			for(int delta=0; delta <= maxNumber(); delta++) {
-				Set<State<L>> newFrontier = new HashSet<State<L>>();
-				for(State<L> curr : lastFrontier) {
-					for (ISymbol<L,K> sym : alphabet) {
-						State<L> succ = curr.successor(sym);
-						if(succ!=null)
-							newFrontier.add(succ);
-					}
-				}
-				if(!newFrontier.isEmpty()) {
+			int delta = 0;
+			do {
+				frontier = nextFrontier;
+				if(!frontier.isEmpty()) {
 					for (ISymbol<L,K> sym : alphabet) {
 						Set<State<L>> symSuccs = new HashSet<State<L>>();
-						for(State<L> curr : newFrontier) {
+						for(State<L> curr : frontier) {
 							State<L> succ = curr.successor(sym);
 							if(succ!=null)
 								symSuccs.add(succ);
@@ -79,8 +72,18 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 						}
 					}
 				}
-				lastFrontier = newFrontier;
-			}
+				
+				nextFrontier = new HashSet<State<L>>();
+				for(State<L> curr : frontier) {
+					for (ISymbol<L,K> sym : alphabet) {
+						State<L> succ = curr.successor(sym);
+						if(succ!=null)
+							nextFrontier.add(succ);
+					}
+				}
+				
+				delta++;
+			} while(!frontier.equals(nextFrontier));
 		}
 				
 		return stateFor(Collections.singleton(delegate.getInitialState()));
