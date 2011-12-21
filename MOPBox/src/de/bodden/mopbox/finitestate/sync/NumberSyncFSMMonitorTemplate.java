@@ -13,13 +13,16 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
 import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
 import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.IMonitor;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
 import de.bodden.mopbox.generic.def.VariableBinding;
+import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 
 /**
  * Idea: can use this technique to buffer event and then process them in bursts.
@@ -101,7 +104,7 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 		if(compoundState==null) {
 			boolean isFinal = true;
 			for (State<L> state : set) {
-				if(!state.isFinal()) {
+				if(!state.isFinal() && !state.equals(delegate.getInitialState())) {
 					isFinal = false;
 					break;
 				}
@@ -120,12 +123,8 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 
 	@Override
 	protected IIndexingStrategy<NumberAndSymbol, K, V> createIndexingStrategy() {
-		return new IIndexingStrategy<NumberSyncFSMMonitorTemplate<L,K,V>.NumberAndSymbol, K, V>() {
-			@Override
-			public void processEvent(ISymbol<NumberAndSymbol, K> symbol, IVariableBinding<K, V> bind) {
-				delegate.getIndexingStrategy().processEvent(symbol.getLabel().getSymbol(), bind);
-			}
-		};
+		//TODO can we somehow choose the strategy based on the one used for the delegate?
+		return new StrategyB<DefaultFSMMonitor<NumberAndSymbol>, NumberAndSymbol, K, V>(this); 
 	}
 
 	@Override
@@ -202,18 +201,19 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 		
 	}
 	
+	protected static String trace = "";
+
 	public static void main(String[] args) {
 		FailSafeIterMonitorTemplate fsi = new FailSafeIterMonitorTemplate();
 		FailSafeIterMonitorTemplate fsi2 = new FailSafeIterMonitorTemplate();
 		NumberSyncFSMMonitorTemplate<String,Var,Object> sync = new NumberSyncFSMMonitorTemplate<String,Var,Object>(fsi2) {
 			public void matchCompleted(IVariableBinding<Var, Object> binding) {
-				// TODO Auto-generated method stub
-				
+				trace += binding.toString();				
 			}
 		};
 		
-//		System.out.println(fsi);
-//		System.out.println(sync);
+		System.out.println(fsi);
+		System.out.println(sync);
 
 		Collection<Object> c = new ArrayList<Object>();
 		Iterator<Object> i = c.iterator();
@@ -231,18 +231,18 @@ public abstract class NumberSyncFSMMonitorTemplate<L, K, V> extends OpenFSMMonit
 		b_ci.put(Var.I, i);
 		
 		
-//		fsi.processEvent("create", b_ci);
-//		sync.processEvent(sync.new NumberAndSymbol(0, fsi.getSymbolByLabel("create")), b_ci);
-//		fsi.processEvent("update", b_c);
-//		//sync.processEvent(sync.new NumberAndSymbol(0, fsi.getSymbolByLabel("update")), b_c);					
-//		fsi.processEvent("iter", b_i);
-//		sync.processEvent(sync.new NumberAndSymbol(1, fsi.getSymbolByLabel("iter")), b_i);					
-//
-//		System.out.println(fsi.getTrace());
-//		System.out.println(fsi2.getTrace());
+		fsi.processEvent("create", b_ci);
+		//sync.processEvent(sync.new NumberAndSymbol(0, fsi.getSymbolByLabel("create")), b_ci);
+		fsi.processEvent("update", b_c);
+		sync.processEvent(sync.new NumberAndSymbol(1, fsi.getSymbolByLabel("update")), b_c);					
+		fsi.processEvent("iter", b_i);
+		sync.processEvent(sync.new NumberAndSymbol(0, fsi.getSymbolByLabel("iter")), b_i);					
+
+		System.out.println("1: "+fsi.getTrace());
+		System.out.println("2: "+trace);
 	
 		
-		//System.exit(0);
+		System.exit(0);
 		
 		//RANDOMIZED TEST
 
