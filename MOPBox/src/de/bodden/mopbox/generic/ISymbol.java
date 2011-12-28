@@ -24,4 +24,7 @@ public interface ISymbol<L,K> {
 	
 	int getBindingIndex();
 	
+	public boolean equals(Object obj);
+
+	public int hashCode();
 }
