@@ -1,82 +1,57 @@
 package de.bodden.mopbox.finitestate.sync;
 
-import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.Multiset;
+
 import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
-import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.ISymbol;
 
 /**
  * Idea: can use this technique to buffer event and then process them in bursts.
  */
 public abstract class NumberAndSymbolSetSyncingTemplate<L, K, V>
-	extends AbstractSyncingFSMMonitorTemplate<L, K, V, NumberAndSymbolSetSyncingTemplate<L,K,V>.NumberSymSetAndSymbol>{
+	extends AbstractSyncingFSMMonitorTemplate<L, K, V, NumberAndSymbolSetSyncingTemplate<L,K,V>.AbstractionBySizeAndSymbols>{
 		
-	public NumberAndSymbolSetSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate) {
-		super(delegate);
+	public NumberAndSymbolSetSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
+		super(delegate, max);
 	}
 	
-	protected Set<State<L>> nextFrontier(Set<State<L>> frontier) {
-		Set<State<L>> nextFrontier;
-		nextFrontier = new HashSet<State<L>>();
-		for(State<L> curr : frontier) {
-			for (ISymbol<L,K> sym : delegate.getAlphabet()) {
-				State<L> succ = curr.successor(sym);
-				if(succ!=null)
-					nextFrontier.add(succ);
-			}
-		}
-		return nextFrontier;
+	protected AbstractionBySizeAndSymbols abstraction(Multiset<ISymbol<L, K>> symbols) {
+		return new AbstractionBySizeAndSymbols(symbols.size(),symbols.elementSet());
 	}
 
-	protected NumberSymSetAndSymbol makeTransition(int delta, ISymbol<L, K> sym) {
-		//TODO FIXME
-		return new NumberSymSetAndSymbol(delta, null, sym);
-	}
-	
-	
-	public class NumberSymSetAndSymbol
-		extends AbstractSyncingFSMMonitorTemplate<L,K,V,NumberSymSetAndSymbol>.ObservationGapInfo {
+	public class AbstractionBySizeAndSymbols
+		extends AbstractSyncingFSMMonitorTemplate<L,K,V,AbstractionBySizeAndSymbols>.SymbolMultisetAbstraction {
 
-		private final int number;
-		private final Set<ISymbol<L, K>> skippedTransitionSymbols;
-		private final ISymbol<L, K> sym;
+		private final int size;
+		private final Set<ISymbol<L, K>> symbols;
 
-		protected NumberSymSetAndSymbol(int number, Set<ISymbol<L, K>> skippedTransitionSymbols, ISymbol<L, K> sym) {
-			super();
-			this.number = number;
-			this.skippedTransitionSymbols = skippedTransitionSymbols;
-			this.sym = sym;
+		protected AbstractionBySizeAndSymbols(int size, Set<ISymbol<L, K>> symbols) {
+			this.size = size;
+			this.symbols = symbols;
 		}
 		
-		public int getNumber() {
-			return number;
+		public int getSize() {
+			return size;
 		}
 		
-		public Set<ISymbol<L, K>> getSkippedTransitionSymbols() {
-			return skippedTransitionSymbols;
+		public Set<ISymbol<L, K>> getSymbols() {
+			return symbols;
 		}
-
-		public ISymbol<L,K> getCurrentSymbol() {
-			return sym;
-		}		
 		
 		@Override
 		public String toString() {
-			return "("+number+":"+skippedTransitionSymbols+":"+sym+")";
+			return "("+size+","+symbols+")";
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + number;
-			result = prime
-					* result
-					+ ((skippedTransitionSymbols == null) ? 0
-							: skippedTransitionSymbols.hashCode());
-			result = prime * result + ((sym == null) ? 0 : sym.hashCode());
+			result = prime * result + size;
+			result = prime * result
+					+ ((symbols == null) ? 0 : symbols.hashCode());
 			return result;
 		}
 
@@ -89,22 +64,15 @@ public abstract class NumberAndSymbolSetSyncingTemplate<L, K, V>
 			if (getClass() != obj.getClass())
 				return false;
 			@SuppressWarnings("unchecked")
-			NumberSymSetAndSymbol other = (NumberSymSetAndSymbol) obj;
-			if (number != other.number)
+			AbstractionBySizeAndSymbols other = (AbstractionBySizeAndSymbols) obj;
+			if (size != other.size)
 				return false;
-			if (skippedTransitionSymbols == null) {
-				if (other.skippedTransitionSymbols != null)
+			if (symbols == null) {
+				if (other.symbols != null)
 					return false;
-			} else if (!skippedTransitionSymbols
-					.equals(other.skippedTransitionSymbols))
-				return false;
-			if (sym == null) {
-				if (other.sym != null)
-					return false;
-			} else if (!sym.equals(other.sym))
+			} else if (!symbols.equals(other.symbols))
 				return false;
 			return true;
 		}
-
-	}
+	}	
 }

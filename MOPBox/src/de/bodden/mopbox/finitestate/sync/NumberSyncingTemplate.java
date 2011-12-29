@@ -5,13 +5,12 @@ import helpers.FailSafeIterMonitorTemplate.Var;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
+
+import com.google.common.collect.Multiset;
 
 import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
-import de.bodden.mopbox.finitestate.State;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
 import de.bodden.mopbox.generic.def.VariableBinding;
@@ -20,61 +19,39 @@ import de.bodden.mopbox.generic.def.VariableBinding;
  * Idea: can use this technique to buffer event and then process them in bursts.
  */
 public abstract class NumberSyncingTemplate<L, K, V>
-	extends AbstractSyncingFSMMonitorTemplate<L, K, V, NumberSyncingTemplate<L,K,V>.NumberAndSymbol>{
+	extends AbstractSyncingFSMMonitorTemplate<L, K, V, NumberSyncingTemplate<L,K,V>.AbstractionBySize>{
 		
-	public NumberSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate) {
-		super(delegate);
+	public NumberSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
+		super(delegate, max);
 	}
 	
-	protected Set<State<L>> nextFrontier(Set<State<L>> frontier) {
-		Set<State<L>> nextFrontier;
-		nextFrontier = new HashSet<State<L>>();
-		for(State<L> curr : frontier) {
-			for (ISymbol<L,K> sym : delegate.getAlphabet()) {
-				State<L> succ = curr.successor(sym);
-				if(succ!=null)
-					nextFrontier.add(succ);
-			}
-		}
-		return nextFrontier;
+	protected AbstractionBySize abstraction(Multiset<ISymbol<L, K>> symbols) {
+		return new AbstractionBySize(symbols.size());
 	}
 
-	protected NumberAndSymbol makeTransition(int delta, ISymbol<L, K> sym) {
-		return new NumberAndSymbol(delta, sym);
-	}
-	
-	
-	public class NumberAndSymbol
-		extends AbstractSyncingFSMMonitorTemplate<L,K,V,NumberAndSymbol>.ObservationGapInfo {
+	public class AbstractionBySize
+		extends AbstractSyncingFSMMonitorTemplate<L,K,V,AbstractionBySize>.SymbolMultisetAbstraction {
 
-		private final int number;
-		private final ISymbol<L, K> sym;
+		private final int size;
 
-		protected NumberAndSymbol(int number, ISymbol<L, K> sym) {
-			super();
-			this.number = number;
-			this.sym = sym;
+		protected AbstractionBySize(int size) {
+			this.size = size;
 		}
 		
-		public int getNumber() {
-			return number;
-		}
-		
-		public ISymbol<L,K> getCurrentSymbol() {
-			return sym;
+		public int getSize() {
+			return size;
 		}
 		
 		@Override
 		public String toString() {
-			return "("+number+":"+sym+")";
+			return Integer.toString(size);
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + number;
-			result = prime * result + ((sym == null) ? 0 : sym.hashCode());
+			result = prime * result + size;
 			return result;
 		}
 
@@ -87,13 +64,8 @@ public abstract class NumberSyncingTemplate<L, K, V>
 			if (getClass() != obj.getClass())
 				return false;
 			@SuppressWarnings("unchecked")
-			NumberAndSymbol other = (NumberAndSymbol) obj;
-			if (number != other.number)
-				return false;
-			if (sym == null) {
-				if (other.sym != null)
-					return false;
-			} else if (!sym.equals(other.sym))
+			AbstractionBySize other = (AbstractionBySize) obj;
+			if (size != other.size)
 				return false;
 			return true;
 		}
@@ -105,7 +77,7 @@ public abstract class NumberSyncingTemplate<L, K, V>
 	public static void main(String[] args) {
 		FailSafeIterMonitorTemplate fsi = new FailSafeIterMonitorTemplate();
 		FailSafeIterMonitorTemplate fsi2 = new FailSafeIterMonitorTemplate();
-		NumberSyncingTemplate<String,Var,Object> sync = new NumberSyncingTemplate<String,Var,Object>(fsi2) {
+		NumberSyncingTemplate<String,Var,Object> sync = new NumberSyncingTemplate<String,Var,Object>(fsi2,5) {
 			public void matchCompleted(IVariableBinding<Var, Object> binding) {
 				trace += binding.toString();				
 			}
@@ -131,11 +103,11 @@ public abstract class NumberSyncingTemplate<L, K, V>
 		
 		
 		fsi.processEvent("create", b_ci);
-		//sync.processEvent(sync.new NumberAndSymbol(0, fsi.getSymbolByLabel("create")), b_ci);
+		//sync.processEvent(sync.new NumberAndSymbol(0, fsi2.getSymbolByLabel("create")), b_ci);
 		fsi.processEvent("update", b_c);
-		sync.processEvent(sync.new NumberAndSymbol(1, fsi.getSymbolByLabel("update")), b_c);					
+		sync.processEvent(sync.new AbstractionAndSymbol(sync.new AbstractionBySize(1),fsi2.getSymbolByLabel("update")), b_c);					
 		fsi.processEvent("iter", b_i);
-		sync.processEvent(sync.new NumberAndSymbol(0, fsi.getSymbolByLabel("iter")), b_i);					
+		sync.processEvent(sync.new AbstractionAndSymbol(sync.new AbstractionBySize(0),fsi2.getSymbolByLabel("iter")), b_i);					
 
 		System.out.println("1: "+fsi.getTrace());
 		System.out.println("2: "+trace);
@@ -157,21 +129,21 @@ public abstract class NumberSyncingTemplate<L, K, V>
 				if(miss) {
 					missed++;
 				} else {
-					sync.processEvent(sync.new NumberAndSymbol(missed, fsi2.getSymbolByLabel("create")), b_ci);
+					sync.processEvent(sync.new AbstractionAndSymbol(sync.new AbstractionBySize(missed),fsi2.getSymbolByLabel("create")), b_ci);					
 				}
 			} else if(rand>=1/3.0 && rand<2/3.0) {
 				fsi.processEvent("iter", b_i);
 				if(miss) {
 					missed++;
 				} else {
-					sync.processEvent(sync.new NumberAndSymbol(missed, fsi2.getSymbolByLabel("iter")), b_i);					
+					sync.processEvent(sync.new AbstractionAndSymbol(sync.new AbstractionBySize(missed),fsi2.getSymbolByLabel("iter")), b_i);					
 				}
 			} else {
 				fsi.processEvent("update", b_c);
 				if(miss) {
 					missed++;
 				} else {
-					sync.processEvent(sync.new NumberAndSymbol(missed, fsi2.getSymbolByLabel("update")), b_c);					
+					sync.processEvent(sync.new AbstractionAndSymbol(sync.new AbstractionBySize(missed),fsi2.getSymbolByLabel("update")), b_c);					
 				}
 			}
 			if(!miss) missed = 0;
@@ -179,4 +151,5 @@ public abstract class NumberSyncingTemplate<L, K, V>
 		System.out.println(fsi.getTrace());
 		System.out.println(fsi2.getTrace());
 	}
+
 }
