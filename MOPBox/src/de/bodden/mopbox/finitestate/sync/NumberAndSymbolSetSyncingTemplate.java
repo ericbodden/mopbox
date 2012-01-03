@@ -8,7 +8,8 @@ import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 
 /**
- * Idea: can use this technique to buffer event and then process them in bursts.
+ * An {@link AbstractSyncingFSMMonitorTemplate} that models the gap of events missed by the number
+ * and kind of missed events.
  */
 public abstract class NumberAndSymbolSetSyncingTemplate<L, K, V>
 	extends AbstractSyncingFSMMonitorTemplate<L, K, V, NumberAndSymbolSetSyncingTemplate<L,K,V>.AbstractionBySizeAndSymbols>{

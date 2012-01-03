@@ -6,7 +6,7 @@ import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 
 /**
- * Idea: can use this technique to buffer event and then process them in bursts.
+ * An {@link AbstractSyncingFSMMonitorTemplate} that models the gap of events missed as a multiset of missed events.
  */
 public abstract class MultisetSyncingTemplate<L, K, V>
 	extends AbstractSyncingFSMMonitorTemplate<L, K, V, MultisetSyncingTemplate<L,K,V>.AbstractionAsMultiset>{

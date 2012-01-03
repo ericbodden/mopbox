@@ -34,12 +34,15 @@ import de.bodden.mopbox.generic.indexing.simple.StrategyB;
  * 
  * The implementation of this class is independent of the particular abstraction used for modeling the
  * summary information. The abstraction must simply subclass {@link SymbolMultisetAbstraction}, implementing
- * equals and hashCode methods.
+ * equals and hashCode methods. The abstraction must, however, be independent of the order in which the skipped
+ * events occur. Otherwise the algorithm used to create the transitions in question may be incorrect. 
  * 
  * @param <L> The type of labels used at transitions.
  * @param <K> The type of keys used in {@link IVariableBinding}s.
  * @param <V> The type of values used in {@link IVariableBinding}s.
- * @param <A> The type of abstraction used to model the summary information at monitoring gaps.
+ * @param <A> The type of abstraction used to model the summary information at monitoring gaps. The summary
+ *            information must not contain any information about the order of skipped events, i.e.,
+ *            abstraction(a b)=abstraction(b a) must hold for all events a,b.
  */
 public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends AbstractSyncingFSMMonitorTemplate<L,K,V,A>.SymbolMultisetAbstraction>
 	extends OpenFSMMonitorTemplate<AbstractSyncingFSMMonitorTemplate<L,K,V,A>.AbstractionAndSymbol, K, V>{
