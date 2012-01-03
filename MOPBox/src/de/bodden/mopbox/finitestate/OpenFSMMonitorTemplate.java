@@ -1,6 +1,10 @@
 package de.bodden.mopbox.finitestate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.bodden.mopbox.generic.IAlphabet;
@@ -50,16 +54,25 @@ public abstract class OpenFSMMonitorTemplate<L, K, V> extends AbstractFSMMonitor
 			sb.append("state ");
 			sb.append(s);
 			sb.append(":\n");
+			List<String> transitions = new ArrayList<String>();
 			for(ISymbol<L, K> sym: getAlphabet()) {
+				StringBuilder sbt = new StringBuilder();
 				State<L> succ = s.successor(sym);
 				if(succ!=null) {
-					sb.append("- ");
-					sb.append(sym);
-					sb.append("-> ");
-					sb.append("state ");
-					sb.append(succ);
-					sb.append("\n");
+					sbt.append("-");
+					sbt.append(sym);
+					sbt.append("-> ");
+					sbt.append("state ");
+					sbt.append(succ);
+					sbt.append("  ");
+					sbt.append(Arrays.toString(sym.getVariables()));
+					sbt.append("\n");
 				}
+				transitions.add(sbt.toString());
+			}
+			Collections.sort(transitions);
+			for (String string : transitions) {
+				sb.append(string);
 			}
 			sb.append("\n");
 		}		
