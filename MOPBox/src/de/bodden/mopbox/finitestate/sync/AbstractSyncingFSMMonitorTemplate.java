@@ -3,6 +3,7 @@ package de.bodden.mopbox.finitestate.sync;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,21 +49,49 @@ import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends AbstractSyncingFSMMonitorTemplate<L,K,V,A>.SymbolMultisetAbstraction>
 	extends OpenFSMMonitorTemplate<AbstractSyncingFSMMonitorTemplate<L,K,V,A>.AbstractionAndSymbol, K, V>{
 	
+	
+	/**
+	 * The monitor template this syncing monitor template is based on.
+	 */
 	protected final OpenFSMMonitorTemplate<L, K, V> delegate;
 	
+	/**
+	 * A mapping from states sets of the delegate to a compound state of this monitor template that represents
+	 * the state set.
+	 */
 	protected final Map<Set<State<L>>,State<AbstractionAndSymbol>> stateSetToCompoundState = new HashMap<Set<State<L>>, State<AbstractionAndSymbol>>();
 	
+	/**
+	 * A mapping used to record a transition relation over compound states, i.e., sets of states
+	 * of the original automaton.
+	 */
 	protected final Map<Set<State<L>>,Map<ISymbol<AbstractionAndSymbol, K>,Set<State<L>>>> transitions =
 		new HashMap<Set<State<L>>, Map<ISymbol<AbstractionAndSymbol,K>,Set<State<L>>>>();
 
+	/**
+	 * The maximal number of skipped events.
+	 */
 	protected final int MAX;
 
+	/**
+	 * @param delegate The monitor template this syncing monitor template is based on. The template will remain unmodified.
+	 * @param max The maximal number of skipped events.
+	 */
 	public AbstractSyncingFSMMonitorTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
 		this.delegate = delegate;
 		this.MAX = max;
 		initialize();
 	}
 
+	/**
+	 * This methods implements the algorithm at the core of this monitor template. The algorithm creates
+	 * transitions of the form (symbol,abstraction) where different abstractions of gaps during monitoring
+	 * are possible. The algorithm uses two worklists, one for state sets of the delegate (which will become
+	 * states in this automaton), and one for multisets of skipped symbols. For each reachable state set
+	 * the algorithm computes all possible successor state sets under an expanded transition relation. This
+	 * transition relation takes into account the abstractions of all possible multisets of skipped events
+	 * up to {@link AbstractSyncingFSMMonitorTemplate#MAX}. 
+	 */
 	@Override
 	protected State<AbstractionAndSymbol> setupStatesAndTransitions() {
 		IAlphabet<L, K> alphabet = delegate.getAlphabet();
@@ -78,12 +107,16 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			Set<State<L>> currentStates = iter.next();
 			iter.remove();
 			
+			//have visited current set of states; to terminate, don't visit again
 			statesVisited.add(currentStates);
 
+			//create a work list for multisets of skipped symbols; starting with the empty multiset
 			Set<Multiset<ISymbol<L, K>>> worklistSyms = new HashSet<Multiset<ISymbol<L, K>>>();
 			final ImmutableMultiset<ISymbol<L, K>> EMPTY = ImmutableMultiset.<ISymbol<L,K>>of();
 			worklistSyms.add(EMPTY); //add empty multiset
 			
+			//this maps an abstraction of a gap info to all the states reachable through this gap
+			//info (and any symbol) 
 			Map<A,Set<State<L>>> abstractionToStates = new HashMap<A, Set<State<L>>>();
 			abstractionToStates.put(abstraction(EMPTY), currentStates);
 
@@ -93,10 +126,17 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 				Multiset<ISymbol<L, K>> syms = symsIter.next();
 				symsIter.remove();
 
+				//compute abstraction for symbols and the set of states reachable by the abstraction
 				A abstraction = abstraction(syms);
 				Set<State<L>> frontier = abstractionToStates.get(abstraction);
 				
+				//this set is used to register all newly computed successor state sets
+				//it is important that this be an identity hash set because the contents of the element sets can change
+				//during the course of the remaining algorithm
+				Set<Set<State<L>>> newStateSets = Collections.newSetFromMap(new IdentityHashMap<Set<State<L>>, Boolean>());
+				
 				for (ISymbol<L,K> sym : alphabet) {
+					//compute successors of the current state set under sym
 					Set<State<L>> symSuccs = new HashSet<State<L>>();
 					for(State<L> curr : frontier) {
 						State<L> succ = curr.successor(sym);
@@ -104,12 +144,15 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 							symSuccs.add(succ);
 					}
 					if(!symSuccs.isEmpty()) {
+						//create label for new transition: (abstraction,sym)
 						ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
-						addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
-						if(!statesVisited.contains(symSuccs)) {
-							worklist.add(symSuccs);
-						}
+						//register possible target states under that transition
+						Set<State<L>> newTargets = addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
+						//register the new state set so that we can later-on add it to the worklist
+						newStateSets.add(newTargets);						
 					}
+					//if we are still below MAX, add sym to the multiset, and add the current set of states
+					//to the set already associated with that multiset (if any) 
 					if(syms.size()<MAX) {
 						ImmutableMultiset<ISymbol<L, K>> newSyms = union(syms, sym);
 						worklistSyms.add(newSyms);
@@ -118,8 +161,15 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 						if(old==null) {
 							old = new HashSet<State<L>>();
 							abstractionToStates.put(newAbstraction, old);
-						}
+						} 
 						old.addAll(symSuccs);
+					}
+				}
+				
+				//push all newly discovered state sets not yet processed onto the worklist
+				for (Set<State<L>> states : newStateSets) {
+					if(!statesVisited.contains(states)) {
+						worklist.add(states);
 					}
 				}
 			} 
@@ -131,7 +181,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		return stateFor(Collections.singleton(delegate.getInitialState()));
 	}
 	
-	protected void addTargetStatesToTransition(Set<State<L>> currentStates, ISymbol<AbstractionAndSymbol,K> symbol, Set<State<L>> someTargetStates) {
+	protected Set<State<L>> addTargetStatesToTransition(Set<State<L>> currentStates, ISymbol<AbstractionAndSymbol,K> symbol, Set<State<L>> someTargetStates) {
 		Map<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolToTargets = transitions.get(currentStates);
 		if(symbolToTargets==null) {
 			symbolToTargets = new HashMap<ISymbol<AbstractionAndSymbol,K>, Set<State<L>>>();
@@ -141,8 +191,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		if(targets==null) {
 			targets = new HashSet<State<L>>();
 			symbolToTargets.put(symbol, targets);
-		}
+		} 
 		targets.addAll(someTargetStates);
+		return targets;
  	}
 
 	private void createTransitions() {
