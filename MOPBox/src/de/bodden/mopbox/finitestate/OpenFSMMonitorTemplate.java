@@ -46,6 +46,7 @@ public abstract class OpenFSMMonitorTemplate<L, K, V> extends AbstractFSMMonitor
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for(State<L> s: getStates()) {
+			if(s==getInitialState()) sb.append("initial ");
 			sb.append("state ");
 			sb.append(s);
 			sb.append(":\n");
