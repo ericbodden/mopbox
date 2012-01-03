@@ -154,6 +154,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 				stateFor(source).addTransition(compoundSymbol, stateFor(targetStates));
 			}			
 		}
+		transitions.clear(); //free space
 	}
 
 	private ImmutableMultiset<ISymbol<L, K>> union(
@@ -178,7 +179,6 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 				}
 			}			
 			compoundState = makeState(isFinal);
-			System.err.println(set + " --> " + compoundState);
 			stateSetToCompoundState.put(set, compoundState);
 		}
 		return compoundState;
