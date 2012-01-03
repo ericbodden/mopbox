@@ -263,7 +263,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			for (ISymbol<L,K> sym : delegate.getAlphabet()) {				
 				alphabet.makeNewSymbol(
 						new AbstractionAndSymbol(abstraction, sym),
-						sym.getVariables() //FIXME What should be the variables of a compound symbol?
+						//a compound symbol only binds the variables that the
+						//symbol at the current point of monitoring binds
+						sym.getVariables() 
 				);
 				if(syms.size()<MAX) {
 					ImmutableMultiset<ISymbol<L, K>> newSyms = union(syms, sym);
