@@ -122,10 +122,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	private State<AbstractionAndSymbol> stateFor(Set<State<L>> set) {
 		State<AbstractionAndSymbol> compoundState = stateSetToCompoundState.get(set);
 		if(compoundState==null) {
-			//FIXME still not quite what we want...
 			boolean isFinal = true;
 			for (State<L> state : set) {
-				if(!state.isFinal() && !state.equals(delegate.getInitialState())) {
+				if(!state.isFinal() ){ 
 					isFinal = false;
 					break;
 				}
@@ -176,7 +175,6 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	}
 	
 	public void processEvent(AbstractionAndSymbol label, IVariableBinding<K,V> binding) {
-		//TODO must have a catch-all mechanism if the number is larger than maxNumber() 
 		super.processEvent(label, binding);
 	}
 	
