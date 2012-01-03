@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMultiset;
@@ -51,6 +52,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	
 	protected final Map<Set<State<L>>,State<AbstractionAndSymbol>> stateSetToCompoundState = new HashMap<Set<State<L>>, State<AbstractionAndSymbol>>();
 	
+	protected final Map<Set<State<L>>,Map<ISymbol<AbstractionAndSymbol, K>,Set<State<L>>>> transitions =
+		new HashMap<Set<State<L>>, Map<ISymbol<AbstractionAndSymbol,K>,Set<State<L>>>>();
+
 	protected final int MAX;
 
 	public AbstractSyncingFSMMonitorTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
@@ -66,16 +70,15 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		Set<Set<State<L>>> worklist = new HashSet<Set<State<L>>>();
 		worklist.add(Collections.singleton(delegate.getInitialState()));
 		
-		Set<State<AbstractionAndSymbol>> statesVisited = new HashSet<State<AbstractionAndSymbol>>();
-		
+		Set<Set<State<L>>> statesVisited = new HashSet<Set<State<L>>>();		
+				
 		while(!worklist.isEmpty()){
 			//pop some element
 			Iterator<Set<State<L>>> iter = worklist.iterator();
 			Set<State<L>> currentStates = iter.next();
 			iter.remove();
 			
-			State<AbstractionAndSymbol> compoundState = stateFor(currentStates);
-			statesVisited.add(compoundState);
+			statesVisited.add(currentStates);
 
 			Set<Multiset<ISymbol<L, K>>> worklistSyms = new HashSet<Multiset<ISymbol<L, K>>>();
 			final ImmutableMultiset<ISymbol<L, K>> EMPTY = ImmutableMultiset.<ISymbol<L,K>>of();
@@ -101,12 +104,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 							symSuccs.add(succ);
 					}
 					if(!symSuccs.isEmpty()) {
-						State<AbstractionAndSymbol> newCompoundState = stateFor(symSuccs);
 						ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
-						if(compoundState.successor(compoundSymbol)==null) 
-							compoundState.addTransition(compoundSymbol, newCompoundState);
-						else
-							assert compoundState.successor(compoundSymbol)==newCompoundState;
+						addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
+						State<AbstractionAndSymbol> newCompoundState = stateFor(symSuccs);
 						if(!statesVisited.contains(newCompoundState)) {
 							worklist.add(symSuccs);
 						}
@@ -124,9 +124,37 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 					}
 				}
 			} 
+			
 		}
 				
+		createTransitions();
+		
 		return stateFor(Collections.singleton(delegate.getInitialState()));
+	}
+	
+	protected void addTargetStatesToTransition(Set<State<L>> currentStates, ISymbol<AbstractionAndSymbol,K> symbol, Set<State<L>> someTargetStates) {
+		Map<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolToTargets = transitions.get(currentStates);
+		if(symbolToTargets==null) {
+			symbolToTargets = new HashMap<ISymbol<AbstractionAndSymbol,K>, Set<State<L>>>();
+			transitions.put(currentStates, symbolToTargets);
+		}
+		Set<State<L>> targets = symbolToTargets.get(symbol);
+		if(targets==null) {
+			targets = new HashSet<State<L>>();
+			symbolToTargets.put(symbol, targets);
+		}
+		targets.addAll(someTargetStates);
+ 	}
+
+	private void createTransitions() {
+		for (Entry<Set<State<L>>, Map<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>>> sourceAndMap : transitions.entrySet()) {
+			Set<State<L>> source = sourceAndMap.getKey();
+			for (Entry<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolAndTargetStates : sourceAndMap.getValue().entrySet()) {
+				ISymbol<AbstractionAndSymbol, K> compoundSymbol = symbolAndTargetStates.getKey();
+				Set<State<L>> targetStates = symbolAndTargetStates.getValue();
+				stateFor(source).addTransition(compoundSymbol, stateFor(targetStates));
+			}			
+		}
 	}
 
 	private ImmutableMultiset<ISymbol<L, K>> union(
