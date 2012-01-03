@@ -106,8 +106,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 					if(!symSuccs.isEmpty()) {
 						ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
 						addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
-						State<AbstractionAndSymbol> newCompoundState = stateFor(symSuccs);
-						if(!statesVisited.contains(newCompoundState)) {
+						if(!statesVisited.contains(symSuccs)) {
 							worklist.add(symSuccs);
 						}
 					}
