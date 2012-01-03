@@ -21,7 +21,25 @@ import de.bodden.mopbox.generic.IVariableBinding;
 import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 
 /**
- * Idea: can use this technique to buffer event and then process them in bursts.
+ * An abstract monitor template for a <i>syncing monitor</i>. Such a monitor may, for performance reasons
+ * skip monitoring a certain number of events. Instead of dispatching those skipped events to the respective
+ * monitor(s), the template instead gathers some summary information. At some point the template then
+ * decides to start monitoring again, it <i>synchronizes</i>. In that case, the template transitions based
+ * on the symbol of that monitored event and on the summary information computed for the gap that was skipped.
+ *
+ * The purpose of this template is to convert a monitor template for a regular FSM property into a template
+ * that is capable of synchronizing. To implement the correct semantics, the alphabet, state set and transition
+ * relation of the resulting automaton are expanded: transitions happen not just based on symbols but
+ * based on a pair of symbol and the gap abstraction.  
+ * 
+ * The implementation of this class is independent of the particular abstraction used for modeling the
+ * summary information. The abstraction must simply subclass {@link SymbolMultisetAbstraction}, implementing
+ * equals and hashCode methods.
+ * 
+ * @param <L> The type of labels used at transitions.
+ * @param <K> The type of keys used in {@link IVariableBinding}s.
+ * @param <V> The type of values used in {@link IVariableBinding}s.
+ * @param <A> The type of abstraction used to model the summary information at monitoring gaps.
  */
 public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends AbstractSyncingFSMMonitorTemplate<L,K,V,A>.SymbolMultisetAbstraction>
 	extends OpenFSMMonitorTemplate<AbstractSyncingFSMMonitorTemplate<L,K,V,A>.AbstractionAndSymbol, K, V>{

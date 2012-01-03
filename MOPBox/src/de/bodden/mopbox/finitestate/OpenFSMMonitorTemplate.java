@@ -5,8 +5,16 @@ import java.util.Set;
 
 import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.ISymbol;
+import de.bodden.mopbox.generic.IVariableBinding;
 
 
+/**
+ * A FSM monitor template that exposes the set of states through a convenience accessor method.  
+ *
+ * @param <L> The type of labels used at transitions.
+ * @param <K> The type of keys used in {@link IVariableBinding}s.
+ * @param <V> The type of values used in {@link IVariableBinding}s.
+ */
 public abstract class OpenFSMMonitorTemplate<L, K, V> extends AbstractFSMMonitorTemplate<L, K, V> {
 
 	protected Set<State<L>> stateCache;
