@@ -1,11 +1,11 @@
 package de.bodden.mopbox.finitestate.sync;
 
+import junit.framework.Assert;
 import helpers.FailSafeIterMonitorTemplate;
 import helpers.FailSafeIterMonitorTemplate.Var;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.google.common.collect.Multiset;
 
@@ -15,22 +15,39 @@ import de.bodden.mopbox.generic.def.VariableBinding;
 
 public class SyncTests {
 	
-	protected static String trace = "";
+	protected String trace = "";
 	
-	static IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_empty = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
+	IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_empty = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
 
-	static IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_c = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
+	IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_c = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
 
-	static IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_c2 = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
+	IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_c2 = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
 
-	static IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_i = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
+	IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_i = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
 
-	static IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_ci = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
+	IVariableBinding<FailSafeIterMonitorTemplate.Var, Object> b_ci = new VariableBinding<FailSafeIterMonitorTemplate.Var, Object>();
 	
-	static {
-		Collection<Object> c = new ArrayList<Object>();
-		Collection<Object> c2 = new ArrayList<Object>();
-		Iterator<Object> i = c.iterator();
+	FailSafeIterMonitorTemplate fsiNormal;
+	FailSafeIterMonitorTemplate fsiNumber;
+	MultisetSyncingTemplate<String,Var,Object> multisetSync;
+	NumberSyncingTemplate<String,Var,Object> numberSync;
+
+	{
+		Object c = new Object() {
+			public String toString() {
+				return "c";
+			}
+		};
+		Object c2 = new Object() {
+			public String toString() {
+				return "c2";
+			}
+		};		
+		Object i = new Object() {
+			public String toString() {
+				return "i1";
+			}
+		};
 		b_c.put(Var.C, c);
 		b_c2.put(Var.C, c2);
 		b_i.put(Var.I, i);
@@ -38,10 +55,11 @@ public class SyncTests {
 		b_ci.put(Var.I, i);
 	}
 
-	public static void main(String[] args) {
-		FailSafeIterMonitorTemplate fsi = new FailSafeIterMonitorTemplate();
-		FailSafeIterMonitorTemplate fsi2 = new FailSafeIterMonitorTemplate();
-		MultisetSyncingTemplate<String,Var,Object> sync = new MultisetSyncingTemplate<String,Var,Object>(fsi,2) {
+	
+	@Before
+	public void setUp() throws Exception {
+		fsiNormal = new FailSafeIterMonitorTemplate();
+		multisetSync = new MultisetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
 			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
 				//only skip a single symbol
 				return skippedSymbols.size()>0;
@@ -50,35 +68,96 @@ public class SyncTests {
 				trace += binding.toString();				
 			}
 		};
-		
-		System.out.println(fsi);
-		System.out.println("===============");
-		System.out.println(sync);
+		numberSync = new NumberSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
+			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
+				//only skip a single symbol
+				return skippedSymbols.size()>0;
+			}
+			public void matchCompleted(IVariableBinding<Var, Object> binding) {
+				trace += binding.toString();				
+			}
+		};
+		trace = "";
+	}
+	
+	
+	/*
+	 * Here we test that the number-syncing monitor does not match.
+	 * This is because we skip the update-event below, and therefore,
+	 * because we are only counting the skipped events, do not know whether
+	 * the skipped event is actually a an update or iter event.
+	 * Since the monitor is a must-monitor, it assumes that
+	 * it was not an update, and therefore does not report the violation.  
+	 */	
+	@Test
+	public void numberSimpleCase() {
+		numberSync.maybeProcessEvent("update", b_c); //skipped
+		fsiNormal.processEvent("update", b_c);
 
-		falsePositive(fsi2, sync);
+		numberSync.maybeProcessEvent("create", b_ci); //monitored
+		fsiNormal.processEvent("create", b_ci);
+		
+		numberSync.maybeProcessEvent("update", b_c); //skipped
+		fsiNormal.processEvent("update", b_c);
+
+		numberSync.maybeProcessEvent("iter", b_i); //monitored
+		fsiNormal.processEvent("iter", b_i);
+
+		Assert.assertEquals("",syncTrace());
+		Assert.assertEquals("{C=c, I=i1}",normalTrace());
+	}
+	
+	/*
+	 * This is a simple test case that validates that the multiset-based monitor matches.  
+	 */	
+	@Test
+	public void multisetSimpleCase() {
+		multisetSync.maybeProcessEvent("update", b_c); //skipped
+		fsiNormal.processEvent("update", b_c);
+
+		multisetSync.maybeProcessEvent("create", b_ci); //monitored
+		fsiNormal.processEvent("create", b_ci);
+		
+		multisetSync.maybeProcessEvent("update", b_c); //skipped
+		fsiNormal.processEvent("update", b_c);
+
+		multisetSync.maybeProcessEvent("iter", b_i); //monitored
+		fsiNormal.processEvent("iter", b_i);
+
+		Assert.assertEquals("{C=c, I=i1}",syncTrace());
+		Assert.assertEquals("{C=c, I=i1}",normalTrace());
 	}
 
+	
 	/*
 	 * In this test case, the sync template will raise a false positive.
 	 * This is because it currently loses the binding on the third event (which is skipped), and
 	 * therefore believes that collection c may have been updated. 
 	 */
-	protected static void falsePositive(FailSafeIterMonitorTemplate fsi2, MultisetSyncingTemplate<String, Var, Object> sync) {
-		sync.maybeProcessEvent("update", b_c); //skipped
-		fsi2.processEvent("update", b_c);
+	@Test
+	public void multisetFalsePositive() {
+		multisetSync.maybeProcessEvent("update", b_c); //skipped
+		fsiNormal.processEvent("update", b_c);
 
-		sync.maybeProcessEvent("create", b_ci); //monitored
-		fsi2.processEvent("create", b_ci);
+		multisetSync.maybeProcessEvent("create", b_ci); //monitored
+		fsiNormal.processEvent("create", b_ci);
 		
-		sync.maybeProcessEvent("update", b_c2); //skipped, binding lost
-		fsi2.processEvent("update", b_c2);
+		multisetSync.maybeProcessEvent("update", b_c2); //skipped, binding lost
+		fsiNormal.processEvent("update", b_c2);
 
-		sync.maybeProcessEvent("iter", b_i); //monitored
-		fsi2.processEvent("iter", b_i);
+		multisetSync.maybeProcessEvent("iter", b_i); //monitored
+		fsiNormal.processEvent("iter", b_i);
 
-		System.err.println("Sync:   "+trace);
-		System.err.println("Normal: "+fsi2.getTrace());
+		Assert.assertEquals("{C=c, I=i1}",syncTrace());
+		Assert.assertEquals("",normalTrace());
+	}
+	
+	private String normalTrace() {
+		return fsiNormal.getTrace();
 	}
 
+	private String syncTrace() {
+		return trace;
+	}
 
 }
