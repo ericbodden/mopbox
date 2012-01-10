@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.ImmutableMultiset.Builder;
 import com.google.common.collect.Multiset;
@@ -76,7 +77,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	/**
 	 * The multiset of skipped events.
 	 */
-	protected Multiset<ISymbol<L, K>> skippedSymbols;
+	protected Multiset<ISymbol<L, K>> skippedSymbols = HashMultiset.create();
 
 	/**
 	 * @param delegate The monitor template this syncing monitor template is based on. The template will remain unmodified.
@@ -235,6 +236,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 				}
 			}			
 			compoundState = makeState(isFinal);
+			System.err.println(compoundState+" - "+set);
 			stateSetToCompoundState.put(set, compoundState);
 		}
 		return compoundState;
@@ -284,10 +286,11 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * Maybe processes the event consisting of the symbol and bindings.
 	 * Whether or not the event is processed depends on the return value of
 	 * the predicate {@link #shouldMonitor(ISymbol, IVariableBinding, Multiset)}.
-	 * @param symbol the current event's symbol
+	 * @param symbolLabel the current event's symbol's label
 	 * @param binding the current events's binding
 	 */
-	public void maybeProcessEvent(ISymbol<L, K> symbol, IVariableBinding<K,V> binding) {
+	public void maybeProcessEvent(L symbolLabel, IVariableBinding<K,V> binding) {
+		ISymbol<L, K> symbol = delegate.getAlphabet().getSymbolByLabel(symbolLabel);
 		if(shouldMonitor(symbol,binding,skippedSymbols)) {
 			processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), binding);
 			skippedSymbols.clear();
