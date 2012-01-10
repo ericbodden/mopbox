@@ -72,6 +72,11 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * The maximal number of skipped events.
 	 */
 	protected final int MAX;
+	
+	/**
+	 * The multiset of skipped events.
+	 */
+	protected Multiset<ISymbol<L, K>> skippedSymbols;
 
 	/**
 	 * @param delegate The monitor template this syncing monitor template is based on. The template will remain unmodified.
@@ -275,9 +280,32 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		}
 	}
 	
-	public void processEvent(AbstractionAndSymbol label, IVariableBinding<K,V> binding) {
-		super.processEvent(label, binding);
+	/**
+	 * Maybe processes the event consisting of the symbol and bindings.
+	 * Whether or not the event is processed depends on the return value of
+	 * the predicate {@link #shouldMonitor(ISymbol, IVariableBinding, Multiset)}.
+	 * @param symbol the current event's symbol
+	 * @param binding the current events's binding
+	 */
+	public void maybeProcessEvent(ISymbol<L, K> symbol, IVariableBinding<K,V> binding) {
+		if(shouldMonitor(symbol,binding,skippedSymbols)) {
+			processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), binding);
+			skippedSymbols.clear();
+		} else {
+			if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
+			skippedSymbols.add(symbol);
+		}
 	}
+	
+	/**
+	 * Determines whether the current event should be monitored.
+	 * @param symbol the current event's symbol
+	 * @param binding the current events's binding
+	 * @param skippedSymbols the multiset of symbols of events skipped so far
+	 * @return 
+	 */
+	protected abstract boolean shouldMonitor(ISymbol<L, K> symbol, IVariableBinding<K, V> binding, Multiset<ISymbol<L, K>> skippedSymbols);
+
 	
 	public class AbstractionAndSymbol {
 		private final A abstraction;
