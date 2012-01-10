@@ -21,6 +21,7 @@ import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.def.VariableBinding;
 import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 
 /**
@@ -78,7 +79,17 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * The multiset of skipped events.
 	 */
 	protected Multiset<ISymbol<L, K>> skippedSymbols = HashMultiset.create();
-
+	
+	/**
+	 * The intersection of the variable bindings of skipped events.
+	 */
+	protected IVariableBinding<K, V> intersectionOfSkippedBindings = new VariableBinding<K, V>();
+	
+	@SuppressWarnings("serial")
+	protected final IVariableBinding<K, V> INCOMPATIBLE_BINDING = new VariableBinding<K, V>() {
+		public boolean isCompatibleWith(IVariableBinding<K,V> other) { return false; };
+	};
+	
 	/**
 	 * @param delegate The monitor template this syncing monitor template is based on. The template will remain unmodified.
 	 * @param max The maximal number of skipped events.
@@ -290,13 +301,20 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * @param binding the current events's binding
 	 */
 	public void maybeProcessEvent(L symbolLabel, IVariableBinding<K,V> binding) {
-		ISymbol<L, K> symbol = delegate.getAlphabet().getSymbolByLabel(symbolLabel);
-		if(shouldMonitor(symbol,binding,skippedSymbols)) {
-			processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), binding);
-			skippedSymbols.clear();
+		if(binding.isCompatibleWith(intersectionOfSkippedBindings)) {
+			intersectionOfSkippedBindings = binding.computeJoinWith(intersectionOfSkippedBindings);
+
+			ISymbol<L, K> symbol = delegate.getAlphabet().getSymbolByLabel(symbolLabel);
+			if(shouldMonitor(symbol,binding,skippedSymbols)) {
+				processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), intersectionOfSkippedBindings);
+				skippedSymbols.clear();
+				intersectionOfSkippedBindings.clear(); //reset binding
+			} else {
+				if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
+				skippedSymbols.add(symbol);
+			}
 		} else {
-			if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
-			skippedSymbols.add(symbol);
+			intersectionOfSkippedBindings = INCOMPATIBLE_BINDING;
 		}
 	}
 	

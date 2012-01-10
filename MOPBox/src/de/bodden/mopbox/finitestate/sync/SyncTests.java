@@ -130,25 +130,26 @@ public class SyncTests {
 
 	
 	/*
-	 * In this test case, the sync template will raise a false positive.
-	 * This is because it currently loses the binding on the third event (which is skipped), and
-	 * therefore believes that collection c may have been updated. 
+	 * In this test case, the sync template must track bindings in order to not
+	 * raise a false positive.
+	 * This is because if the binding on the third event (which is skipped) is lost,
+	 * the sync monitor template will mistakenly think that c may have been updated. 
 	 */
 	@Test
-	public void multisetFalsePositive() {
+	public void avoidFalsePositivesWithMultipleBindings() {
 		multisetSync.maybeProcessEvent("update", b_c); //skipped
 		fsiNormal.processEvent("update", b_c);
 
 		multisetSync.maybeProcessEvent("create", b_ci); //monitored
 		fsiNormal.processEvent("create", b_ci);
 		
-		multisetSync.maybeProcessEvent("update", b_c2); //skipped, binding lost
+		multisetSync.maybeProcessEvent("update", b_c2); //skipped, but binding must be kept!
 		fsiNormal.processEvent("update", b_c2);
 
 		multisetSync.maybeProcessEvent("iter", b_i); //monitored
 		fsiNormal.processEvent("iter", b_i);
 
-		Assert.assertEquals("{C=c, I=i1}",syncTrace());
+		Assert.assertEquals("",syncTrace());
 		Assert.assertEquals("",normalTrace());
 	}
 	
