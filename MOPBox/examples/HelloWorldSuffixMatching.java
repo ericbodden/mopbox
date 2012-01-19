@@ -39,6 +39,15 @@ public class HelloWorldSuffixMatching {
 		template.processEvent("hello");
 		template.processEvent("world");
 		template.reset();	
+
+		/* This will even match twice. 
+		 */
+		System.out.println("Trace 4...");
+		template.processEvent("hello");
+		template.processEvent("world"); //once here
+		template.processEvent("hello");
+		template.processEvent("world"); //once here
+		template.reset();	
 	}	
 
 	static class HelloWorldSuffixMonitor extends AbstractFSMMonitorTemplate<String, String, Object> {
@@ -72,12 +81,22 @@ public class HelloWorldSuffixMatching {
 			State<String> error = makeState(true /*is an error state*/);
 			
 			//the following transitions are for suffix matching;
-			//they "eat up" all prefixes of the trace, thius ignoring them
-			initial.addTransition(getSymbolByLabel("hello"), initial);
+			//they "eat up" all "world" prefixes of the trace, thus ignoring them
 			initial.addTransition(getSymbolByLabel("world"), initial);
 			
+			//upon the first "hello" we move to "middle"
 			initial.addTransition(getSymbolByLabel("hello"), middle);
+			
+			//for any further "hello" we stay in "middle" (thereby ignoring all other
+			//"hello" events already read
+			middle.addTransition(getSymbolByLabel("hello"), middle);
+			
+			//hello->world, now we reach an error state
 			middle.addTransition(getSymbolByLabel("world"), error);
+			
+			//this is needed to be notified again when there are additional matches
+			error.addTransition(getSymbolByLabel("hello"), middle);
+			error.addTransition(getSymbolByLabel("world"), initial);
 			
 			return initial; //by convention, we return the initial state
 		}
