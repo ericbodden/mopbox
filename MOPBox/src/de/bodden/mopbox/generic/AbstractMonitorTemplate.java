@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.bodden.mopbox.generic.def.Alphabet;
+import de.bodden.mopbox.generic.def.VariableBinding;
 
 
 /**
@@ -50,7 +51,9 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * Subclasses must override this method to fill in the set of variables
 	 * used by symbols of this alphabet. 
 	 */
-	protected abstract void fillVariables(Set<K> variables);
+	protected void fillVariables(Set<K> variables) {
+		//empty default implementation; no variables
+	}
 
 	/**
 	 * Creates and returns this template's {@link IIndexingStrategy}. Subclasses
@@ -70,18 +73,26 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	}
 
 	/**
-	 * TODO Right now the entire method it synchronized. It would be nice to have a more
+	 * TODO Right now the entire method is synchronized. It would be nice to have a more
 	 * fine-grained locking scheme.
 	 * 
 	 * @see de.bodden.mopbox.generic.IMonitorTemplate#processEvent(de.bodden.mopbox.generic.IEvent)
 	 */
 	@Override
-	public void processEvent(L label, IVariableBinding<K,V> binding){
+	public synchronized void processEvent(L label, IVariableBinding<K,V> binding){
 		assert alphabet.variables().containsAll(binding.keySet()):
 			"Event has undefined variables: "+binding+" vs. "+alphabet;
 		assert initialized : "not initialized!";
 		
 		getIndexingStrategy().processEvent(getSymbolByLabel(label), binding);
+	}
+
+	/**
+	 * A convenience method. A version of {@link #processEvent(Object, IVariableBinding)} in which
+	 * variable bindings are ignored.
+	 */
+	public void processEvent(L label){
+		processEvent(label, VariableBinding.<K,V>emptyBinding());
 	}
 	
 	/**
@@ -100,5 +111,12 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	
 	public IIndexingStrategy<L,K,V> getIndexingStrategy() {
 		return indexingStrategy;
+	}
+	
+	/**
+	 * Resets all state of this template by re-instantiating its indexing strategy. 
+	 */
+	public void reset() {
+		indexingStrategy = createIndexingStrategy();
 	}
 }

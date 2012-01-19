@@ -4,9 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.bodden.mopbox.generic.AbstractMonitorTemplate;
+import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.IMonitorTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 
 /**
  * This is an abstract super class for {@link IMonitorTemplate}s of finite-state runtime monitors.
@@ -82,4 +84,11 @@ public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorT
 	 */
 	protected abstract State<L> setupStatesAndTransitions();
 	
+	/**
+	 * By default, we choose a {@link StrategyB}. Subclasses may
+	 * override this method to use other strategies if desired.
+	 */
+	protected IIndexingStrategy<L,K,V> createIndexingStrategy() {
+		return new StrategyB<DefaultFSMMonitor<L>, L, K, V>(this);
+	}
 }
