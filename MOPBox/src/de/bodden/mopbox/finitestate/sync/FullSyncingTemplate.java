@@ -12,35 +12,49 @@ import de.bodden.mopbox.generic.ISymbol;
 public abstract class FullSyncingTemplate<L, K, V>
 	extends AbstractSyncingFSMMonitorTemplate<L, K, V, FullSyncingTemplate<L,K,V>.FullAbstraction>{
 		
-	private final FullAbstraction FULL_ABSTRACTION = new FullAbstraction();
-
 	public FullSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
 		super(delegate, max);
 	}
 	
 	protected FullAbstraction abstraction(Multiset<ISymbol<L, K>> symbols) {
-		return FULL_ABSTRACTION;
+		return new FullAbstraction(!symbols.isEmpty());
 	}
-
+	
 	public class FullAbstraction
 		extends AbstractSyncingFSMMonitorTemplate<L,K,V,FullAbstraction>.SymbolMultisetAbstraction {
 
-		protected FullAbstraction() {
+		private final boolean skippedSomething;
+
+		protected FullAbstraction(boolean skippedSomething) {
+			this.skippedSomething = skippedSomething;
 		}
 		
 		@Override
 		public String toString() {
-			return "FullAbstraction";
+			return skippedSomething ? "*" : "{}";
 		}
 
 		@Override
 		public int hashCode() {
-			return 37;
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (skippedSomething ? 1231 : 1237);
+			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object obj) {
-			return obj==this;
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			FullAbstraction other = (FullAbstraction) obj;
+			if (skippedSomething != other.skippedSomething)
+				return false;
+			return true;
 		}
 
 	}

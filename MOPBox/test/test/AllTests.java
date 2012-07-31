@@ -3,6 +3,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.bodden.mopbox.generic.IIndexingStrategy;
+import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 import de.bodden.mopbox.generic.indexing.simple.StrategyC;
 
  
@@ -19,6 +20,6 @@ import de.bodden.mopbox.generic.indexing.simple.StrategyC;
 public class AllTests {
 	
 	@SuppressWarnings("rawtypes")
-	public final static Class<? extends IIndexingStrategy> STRATEGY_CLASS = StrategyC.class;
+	public final static Class<? extends IIndexingStrategy> STRATEGY_CLASS = StrategyB.class;
 	
 }
