@@ -180,6 +180,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 							abstractionToStates.put(newAbstraction, old);
 						} 
 						old.addAll(symSuccs);
+						//for abstracted events we do not know whether they happened on the same object
+						//or not; hence we could also have stayed in the same set of states
+						old.addAll(frontier);
 					}
 				}
 				
@@ -210,7 +213,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			symbolToTargets.put(symbol, targets);
 		} 
 		targets.addAll(someTargetStates);
-		return targets;
+		return new HashSet<State<L>>(targets);
  	}
 
 	private void createTransitions() {
@@ -305,19 +308,19 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 //
 //		Then at event e (which we monitor), if the intersection is not "false" but some other binding b then we dispatch to b's monitor. If it is false then...?
 		
-		boolean compatible = binding.isCompatibleWith(intersectionOfSkippedBindings); 
-		if(compatible) {
-			binding = intersectionOfSkippedBindings = binding.computeJoinWith(intersectionOfSkippedBindings);			
-		} else {
-			intersectionOfSkippedBindings = INCOMPATIBLE_BINDING;
-		}
+//		boolean compatible = binding.isCompatibleWith(intersectionOfSkippedBindings); 
+//		if(compatible) {
+//			binding = intersectionOfSkippedBindings = binding.computeJoinWith(intersectionOfSkippedBindings);			
+//		} else {
+//			intersectionOfSkippedBindings = INCOMPATIBLE_BINDING;
+//		}
 		
 		ISymbol<L, K> symbol = delegate.getAlphabet().getSymbolByLabel(symbolLabel);
 		if(shouldMonitor(symbol,binding,skippedSymbols)) {
-			if(compatible)
+//			if(compatible)
 				processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), binding);
 			skippedSymbols.clear();
-			intersectionOfSkippedBindings.clear(); //reset binding
+//			intersectionOfSkippedBindings.clear(); //reset binding
 		} else {
 			if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
 			skippedSymbols.add(symbol);
