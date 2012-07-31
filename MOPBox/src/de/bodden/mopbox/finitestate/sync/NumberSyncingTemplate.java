@@ -29,10 +29,6 @@ public abstract class NumberSyncingTemplate<L, K, V>
 			this.size = size;
 		}
 		
-		public int getSize() {
-			return size;
-		}
-		
 		@Override
 		public String toString() {
 			return Integer.toString(size);

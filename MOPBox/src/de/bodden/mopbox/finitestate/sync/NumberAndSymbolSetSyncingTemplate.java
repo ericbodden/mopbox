@@ -32,15 +32,7 @@ public abstract class NumberAndSymbolSetSyncingTemplate<L, K, V>
 			this.size = size;
 			this.symbols = symbols;
 		}
-		
-		public int getSize() {
-			return size;
-		}
-		
-		public Set<ISymbol<L, K>> getSymbols() {
-			return symbols;
-		}
-		
+
 		@Override
 		public String toString() {
 			return "("+size+","+symbols+")";
