@@ -10,8 +10,10 @@ import java.util.Set;
 
 import com.google.common.collect.Multiset;
 
-import de.bodden.mopbox.finitestate.AbstractFSMMonitorTemplate;
+import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
 import de.bodden.mopbox.finitestate.sync.AbstractSyncingFSMMonitorTemplate;
+import de.bodden.mopbox.finitestate.sync.FullSyncingTemplate;
+import de.bodden.mopbox.finitestate.sync.MultisetSyncingTemplate;
 import de.bodden.mopbox.finitestate.sync.SymbolSetSyncingTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
@@ -24,41 +26,71 @@ public class TraceReader {
 
 	public static void main(String[] args) throws IOException {
 		if(args.length!=2) {
-			System.err.println("USAGE: <pathToTraceFile> <propertyName>");
+			System.err.println("USAGE: <pathToTraceFile> (full|multiset|set) (fsi|...)");
 		}
 		
 		String filePath = args[0];
-		String propName = args[1];
+		String abstName = args[1];
+		String propName = args[2];
 		
 		AbstractSyncingFSMMonitorTemplate<String, String, Integer, ?> syncingTemplate = null;
-		AbstractFSMMonitorTemplate<String, String, Integer> innerTemplate = null;
+		OpenFSMMonitorTemplate<String,String,Integer> innerTemplate = null;
 		if(propName.equals("fsi")) {
-			FailSafeIterMonitorTemplate failSafeIterMonitorTemplate = new FailSafeIterMonitorTemplate() {
+			innerTemplate = new FailSafeIterMonitorTemplate() {
 				@Override
 				public IVariableBinding<String, Integer> createEmptyBinding() {
 					return new EqualsBinding();
 				}
 			};
-			innerTemplate = failSafeIterMonitorTemplate;
-			syncingTemplate = new SymbolSetSyncingTemplate<String, String, Integer>(failSafeIterMonitorTemplate, 5) {
+		} else {
+			throw new IllegalArgumentException("invalid monitor spec: "+propName);
+		}
 
+		if(abstName.contentEquals("set")) {			
+			syncingTemplate = new SymbolSetSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+	
 				@Override
 				public void matchCompleted(IVariableBinding<String, Integer> binding) {
 					System.err.println("MATCH!");
 				}
-
+	
 				@Override
-				protected boolean shouldMonitor(ISymbol<String, String> symbol,
-						IVariableBinding<String, Integer> binding,
+				protected boolean shouldMonitor(ISymbol<String, String> symbol, IVariableBinding<String, Integer> binding,
 						Multiset<ISymbol<String, String>> skippedSymbols) {
-					//TODO fill in logic
-					return true;
+					return TraceReader.shouldMonitor();
 				}
 			};
-
+		} else if(abstName.contentEquals("full")) {			
+			syncingTemplate = new FullSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+	
+				@Override
+				public void matchCompleted(IVariableBinding<String, Integer> binding) {
+					System.err.println("MATCH!");
+				}
+	
+				@Override
+				protected boolean shouldMonitor(ISymbol<String, String> symbol, IVariableBinding<String, Integer> binding,
+						Multiset<ISymbol<String, String>> skippedSymbols) {
+					return TraceReader.shouldMonitor();
+				}
+			};
+		} else if(abstName.contentEquals("multiset")) {			
+			syncingTemplate = new MultisetSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+	
+				@Override
+				public void matchCompleted(IVariableBinding<String, Integer> binding) {
+					System.err.println("MATCH!");
+				}
+	
+				@Override
+				protected boolean shouldMonitor(ISymbol<String, String> symbol, IVariableBinding<String, Integer> binding,
+						Multiset<ISymbol<String, String>> skippedSymbols) {
+					return TraceReader.shouldMonitor();
+				}
+			};
+		} else {
+			throw new IllegalArgumentException("invalid abstraction: "+abstName);
 		}
-		if(innerTemplate==null)
-			System.exit(1);
 
 		Set<String> symbols = new HashSet<String>();		
 		for (ISymbol<String, String> sym: innerTemplate.getAlphabet().asSet()) {
@@ -96,6 +128,10 @@ public class TraceReader {
 			syncingTemplate.maybeProcessEvent(symbolName, binding);
 		}
 	
+	}
+	
+	static boolean shouldMonitor() {
+		return true;
 	}
 	
 	@SuppressWarnings("serial")
