@@ -8,7 +8,17 @@
           target: default              
          ================================= -->
     <target name="default" depends="depends" description="description">
-        <jar destfile="mopbox.jar">
+	  <javac
+	            destdir="bin"
+	        	fork="true"
+	        >
+	        	<classpath>
+	        		<pathelement location="collections-generic-4.01.jar"/>
+	           		<pathelement location="guava-10.0.1.jar"/>
+	        	</classpath>
+	            <src path="src"/>
+	        </javac>
+    	<jar destfile="mopbox.jar">
         	<fileset dir="bin"/>
         </jar>
     </target>
