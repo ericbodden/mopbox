@@ -73,14 +73,14 @@ public class SyncTests2 {
 //				trace += binding.toString();				
 //			}
 //		};
-		symbolSetSync = new SymbolSetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
-			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
-				return !shouldSkip();
-			}
-			public void matchCompleted(IVariableBinding<Var, Object> binding) {
-				trace += binding.toString();				
-			}
-		};
+//		symbolSetSync = new SymbolSetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
+//			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
+//				return !shouldSkip();
+//			}
+//			public void matchCompleted(IVariableBinding<Var, Object> binding) {
+//				trace += binding.toString();				
+//			}
+//		};
 		fullSync = new FullSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
 			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
 				return !shouldSkip();
@@ -93,32 +93,32 @@ public class SyncTests2 {
 		eventCount = 1;
 	}
 
-	@Test
-	public void setBasedAbstractionMatch() {
-		symbolSetSync.maybeProcessEvent("create", b_ci); 
-
-		Assert.assertEquals("",syncTrace());
-		
-		symbolSetSync.maybeProcessEvent("update", b_c); 
-
-		Assert.assertEquals("",syncTrace());
-
-		symbolSetSync.maybeProcessEvent("iter", b_i); 
-
-		Assert.assertEquals("",syncTrace());
-
-		symbolSetSync.maybeProcessEvent("update", b_c); 
-
-		Assert.assertEquals("",syncTrace());
-
-		symbolSetSync.maybeProcessEvent("iter", b_i); 
-
-		Assert.assertEquals("",syncTrace());
-
-		symbolSetSync.maybeProcessEvent("iter", b_i); 
-
-		Assert.assertEquals("{C=c, I=i1}",syncTrace());
-	}
+//	@Test
+//	public void setBasedAbstractionMatch() {
+//		symbolSetSync.maybeProcessEvent("create", b_ci); 
+//
+//		Assert.assertEquals("",syncTrace());
+//		
+//		symbolSetSync.maybeProcessEvent("update", b_c); 
+//
+//		Assert.assertEquals("",syncTrace());
+//
+//		symbolSetSync.maybeProcessEvent("iter", b_i); 
+//
+//		Assert.assertEquals("",syncTrace());
+//
+//		symbolSetSync.maybeProcessEvent("update", b_c); 
+//
+//		Assert.assertEquals("",syncTrace());
+//
+//		symbolSetSync.maybeProcessEvent("iter", b_i); 
+//
+//		Assert.assertEquals("",syncTrace());
+//
+//		symbolSetSync.maybeProcessEvent("iter", b_i); 
+//
+//		Assert.assertEquals("{C=c, I=i1}",syncTrace());
+//	}
 	
 	@Test
 	public void fullAbstractionMatch() {

@@ -53,6 +53,12 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	
 	
 	/**
+	 * The empty multi-set of symbols.
+	 */
+	private final ImmutableMultiset<ISymbol<L, K>> EMPTY = ImmutableMultiset.<ISymbol<L,K>>of();
+
+	
+	/**
 	 * The monitor template this syncing monitor template is based on.
 	 */
 	protected final OpenFSMMonitorTemplate<L, K, V> delegate;
@@ -84,6 +90,16 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * The intersection of the variable bindings of skipped events.
 	 */
 	protected IVariableBinding<K, V> intersectionOfSkippedBindings = new VariableBinding<K, V>();
+	
+	/**
+	 * The number of times we reenabled monitoring.
+	 */
+	protected long reenableTime;
+	
+	/**
+	 * Boolean stating whether we monitored the last event.
+	 */
+	protected boolean didMonitorLastEvent = true;
 	
 	@SuppressWarnings("serial")
 	protected final IVariableBinding<K, V> INCOMPATIBLE_BINDING = new VariableBinding<K, V>() {
@@ -129,7 +145,6 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 
 			//create a work list for multisets of skipped symbols; starting with the empty multiset
 			Set<Multiset<ISymbol<L, K>>> worklistSyms = new HashSet<Multiset<ISymbol<L, K>>>();
-			final ImmutableMultiset<ISymbol<L, K>> EMPTY = ImmutableMultiset.<ISymbol<L,K>>of();
 			worklistSyms.add(EMPTY); //add empty multiset
 			
 			//this maps an abstraction of a gap info to all the states reachable through this gap
@@ -317,13 +332,16 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		
 		ISymbol<L, K> symbol = delegate.getAlphabet().getSymbolByLabel(symbolLabel);
 		if(shouldMonitor(symbol,binding,skippedSymbols)) {
+			if(!didMonitorLastEvent) reenableTime++;
 //			if(compatible)
 				processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), binding);
 			skippedSymbols.clear();
+			didMonitorLastEvent = true;
 //			intersectionOfSkippedBindings.clear(); //reset binding
 		} else {
 			if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
 			skippedSymbols.add(symbol);
+			didMonitorLastEvent = false;
 		}
 	}
 	
@@ -385,6 +403,36 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		@Override
 		public String toString() {
 			return "<"+abstraction+";"+symbol+">";
+		}
+	}
+	
+	@Override
+	public SyncFSMMonitor createMonitorPrototype() {
+		return new SyncFSMMonitor(getInitialState());
+	}
+	
+
+	public class SyncFSMMonitor extends DefaultFSMMonitor<AbstractionAndSymbol> {
+
+		protected long lastAccess;
+		
+		public SyncFSMMonitor(State<AbstractionAndSymbol> initialState) {
+			super(initialState);
+		}
+		
+		@Override
+		public boolean processEvent(ISymbol<AbstractionAndSymbol, ?> s) {
+			//as input we get a syncing symbol; now we must check whether we actually need
+			//to sync; if not, then we modify the symbol to a non-syncing one
+			
+			if(reenableTime==lastAccess) {
+				//don't sync
+				s = getAlphabet().getSymbolByLabel(new AbstractionAndSymbol(abstraction(EMPTY), s.getLabel().getSymbol()));
+			} else {
+				lastAccess = reenableTime;
+			}
+			
+			return super.processEvent(s);
 		}
 	}
 
