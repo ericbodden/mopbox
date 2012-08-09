@@ -26,13 +26,17 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 
 	private IIndexingStrategy<L,K,V> indexingStrategy;
 	
+	private IVariableBinding<K, V> emptyBinding;
+
 	private boolean initialized = false;
+	
 	
 	/**
 	 * Initializes the template, filling in the alphabet and creating the indexing strategy.
 	 */	
 	protected void initialize() {
 		alphabet = createAlphabet(); 
+		emptyBinding = createEmptyBinding();
 		fillAlphabet(alphabet);
 		indexingStrategy = createIndexingStrategy();
 		initialized = true;
@@ -92,7 +96,7 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 * variable bindings are ignored.
 	 */
 	public void processEvent(L label){
-		processEvent(label, VariableBinding.<K,V>emptyBinding());
+		processEvent(label, emptyBinding);
 	}
 	
 	/**
@@ -118,5 +122,10 @@ public abstract class AbstractMonitorTemplate<M extends IMonitor<M,L>,L,K,V> imp
 	 */
 	public void reset() {
 		indexingStrategy = createIndexingStrategy();
+	}
+	
+	@Override
+	public IVariableBinding<K, V> createEmptyBinding() {
+		return new VariableBinding<K, V>();
 	}
 }

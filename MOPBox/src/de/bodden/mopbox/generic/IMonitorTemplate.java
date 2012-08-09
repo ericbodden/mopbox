@@ -39,5 +39,10 @@ public interface IMonitorTemplate<M extends IMonitor<M,L>,L,K,V> {
 	/**
 	 * Returns the alphabet which monitors of this template are evaluated over.
 	 */
-	IAlphabet<L,K> getAlphabet();	
+	IAlphabet<L,K> getAlphabet();
+
+	/**
+	 * Creates and returns an empty variable binding.
+	 */
+	IVariableBinding<K,V> createEmptyBinding();	
 }

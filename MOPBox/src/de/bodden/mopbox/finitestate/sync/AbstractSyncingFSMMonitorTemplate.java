@@ -411,6 +411,10 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		return new SyncFSMMonitor(getInitialState());
 	}
 	
+	@Override
+	public IVariableBinding<K, V> createEmptyBinding() {
+		return delegate.createEmptyBinding();
+	}
 
 	public class SyncFSMMonitor extends DefaultFSMMonitor<AbstractionAndSymbol> {
 
@@ -441,5 +445,5 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 
 		public abstract boolean equals(Object obj);		
 	}
-	
+
 }

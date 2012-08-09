@@ -10,7 +10,6 @@ import de.bodden.mopbox.generic.IMonitor;
 import de.bodden.mopbox.generic.IMonitorTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
-import de.bodden.mopbox.generic.def.VariableBinding;
 
 /**
  * This strategy is known as Algorithm B in the TACAS paper of Feng Chen at al.
@@ -22,7 +21,7 @@ import de.bodden.mopbox.generic.def.VariableBinding;
 public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrategy<L,K,V> {
 	
 	@SuppressWarnings("rawtypes")
-	private static final IVariableBinding EMPTY_BINDING = new VariableBinding();
+	private final IVariableBinding EMPTY_BINDING;
 	
 	@SuppressWarnings("unchecked")
 	protected IVariableBinding<K,V> emptyBinding() {
@@ -38,7 +37,8 @@ public class StrategyB<M extends IMonitor<M,L>,L,K,V> implements IIndexingStrate
 	public StrategyB(IMonitorTemplate<M,L,K,V> template) {
 		this.template = template;
 		bindingToMonitor = new HashMap<IVariableBinding<K,V>, M>();		
-		bindingToMonitor.put(emptyBinding(), template.createMonitorPrototype());		
+		bindingToMonitor.put(emptyBinding(), template.createMonitorPrototype());
+		EMPTY_BINDING = template.createEmptyBinding();
 	}
 
 	@Override

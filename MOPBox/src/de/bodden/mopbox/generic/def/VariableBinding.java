@@ -23,14 +23,6 @@ import de.bodden.mopbox.generic.IVariableBinding;
 @SuppressWarnings("serial")
 public class VariableBinding<K,V> extends ReferenceIdentityMap<K, V> implements IVariableBinding<K,V>, Cloneable {
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected static VariableBinding EMPTY = new VariableBinding(Collections.emptyMap());
-	
-	@SuppressWarnings("unchecked")
-	public static <K,V> VariableBinding<K, V> emptyBinding() {
-		return EMPTY;
-	}
-
 	public VariableBinding(Map<K,V> map) {
 		//TODO want to use weak values here but the problem is that these maps are used as keys
 		//in other maps; hence need to update the parent maps!
