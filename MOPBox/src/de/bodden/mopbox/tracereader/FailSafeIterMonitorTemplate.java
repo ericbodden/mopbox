@@ -32,15 +32,15 @@ public class FailSafeIterMonitorTemplate extends OpenFSMMonitorTemplate<String,S
 	
 	protected State<String> setupStatesAndTransitions() {
 		State<String> initial = makeState(false);
-		State<String> nextating = makeState(false);
+		State<String> iterating = makeState(false);
 		State<String> updated = makeState(false);
 		State<String> error = makeState(true);
 		
-		initial.addTransition(getSymbolByLabel("create"), nextating);
+		initial.addTransition(getSymbolByLabel("create"), iterating);
 		initial.addTransition(getSymbolByLabel("update"), initial);
 		initial.addTransition(getSymbolByLabel("next"), initial);
-		nextating.addTransition(getSymbolByLabel("next"), nextating);
-		nextating.addTransition(getSymbolByLabel("update"), updated);
+		iterating.addTransition(getSymbolByLabel("next"), iterating);
+		iterating.addTransition(getSymbolByLabel("update"), updated);
 		updated.addTransition(getSymbolByLabel("update"), updated);
 		updated.addTransition(getSymbolByLabel("next"), error);
 		return initial;
