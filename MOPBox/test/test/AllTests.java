@@ -4,7 +4,6 @@ import org.junit.runners.Suite;
 
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.indexing.simple.StrategyB;
-import de.bodden.mopbox.generic.indexing.simple.StrategyC;
 
  
 /**
