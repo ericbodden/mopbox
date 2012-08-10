@@ -20,6 +20,8 @@
 	        </javac>
     	<jar destfile="mopbox.jar">
         	<fileset dir="bin"/>
+            <zipfileset src="collections-generic-4.01.jar"/>
+            <zipfileset src="guava-10.0.1.jar"/>
         </jar>
     </target>
 

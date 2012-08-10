@@ -25,7 +25,7 @@ import de.bodden.mopbox.generic.def.VariableBinding;
 public class TraceReader {
 
 	public static void main(String[] args) throws IOException {
-		if(args.length!=2) {
+		if(args.length!=3) {
 			System.err.println("USAGE: <pathToTraceFile> (full|multiset|set) (fsi|...)");
 		}
 		
