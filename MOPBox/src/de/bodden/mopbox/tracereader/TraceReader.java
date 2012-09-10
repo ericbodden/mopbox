@@ -14,6 +14,7 @@ import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
 import de.bodden.mopbox.finitestate.sync.AbstractSyncingFSMMonitorTemplate;
 import de.bodden.mopbox.finitestate.sync.FullSyncingTemplate;
 import de.bodden.mopbox.finitestate.sync.MultisetSyncingTemplate;
+import de.bodden.mopbox.finitestate.sync.NumberSyncingTemplate;
 import de.bodden.mopbox.finitestate.sync.SymbolSetSyncingTemplate;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
@@ -48,6 +49,20 @@ public class TraceReader {
 
 		if(abstName.contentEquals("set")) {			
 			syncingTemplate = new SymbolSetSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+	
+				@Override
+				public void matchCompleted(IVariableBinding<String, Integer> binding) {
+					System.err.println("MATCH!");
+				}
+	
+				@Override
+				protected boolean shouldMonitor(ISymbol<String, String> symbol, IVariableBinding<String, Integer> binding,
+						Multiset<ISymbol<String, String>> skippedSymbols) {
+					return TraceReader.shouldMonitor();
+				}
+			};
+		} else if(abstName.contentEquals("num")) {			
+			syncingTemplate = new NumberSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
 	
 				@Override
 				public void matchCompleted(IVariableBinding<String, Integer> binding) {
