@@ -7,6 +7,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import com.google.common.collect.HashMultiset;
@@ -107,6 +108,35 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	};
 	
 	/**
+	 * We use this random source to produce coin flips that tell us whether to turn sampling
+	 * on or off during any given sampling period. We use a deterministic seed for
+	 * reproducibility. 
+	 */
+	protected final Random random = new Random(0L);
+	
+	/**
+	 * The length of any sampling period.
+	 */
+	protected final int samplingPeriod;
+
+	/**
+	 * The length of any skip period.
+	 */
+	protected final int skipPeriod;
+
+	/**
+	 * The current phase of the sampling period, where 0 is the start of the period.
+	 */
+	protected int phase;
+	
+	/**
+	 * This boolean tells us whether or not we will process events in the current period.
+	 */
+	protected boolean processEventsInCurrentPeriod;
+	
+	protected final Set<ISymbol<L, K>> criticalSymbols;
+	
+	/**
 	 * @param delegate The monitor template this syncing monitor template is based on. The template will remain unmodified.
 	 * @param max The maximal number of skipped events.
 	 */
@@ -114,6 +144,9 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		this.delegate = delegate;
 		this.MAX = max;
 		initialize();
+		this.samplingPeriod = samplingPeriod();
+		this.skipPeriod = (int) (1.0d/samplingRate() - 1) * samplingPeriod; 
+		this.criticalSymbols = criticalSymbols();
 	}
 
 	/**
@@ -319,25 +352,12 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * @param binding the current events's binding
 	 */
 	public void maybeProcessEvent(L symbolLabel, IVariableBinding<K,V> binding) {
-//		While skipping the events e_1 to e_n, we intersect those event's bindings. E.g. c=c1 and i=i1 intersects to (c=c1 && i=i1). If we get two contradicting bindings during the process then we intersect to "false".
-//
-//		Then at event e (which we monitor), if the intersection is not "false" but some other binding b then we dispatch to b's monitor. If it is false then...?
-		
-//		boolean compatible = binding.isCompatibleWith(intersectionOfSkippedBindings); 
-//		if(compatible) {
-//			binding = intersectionOfSkippedBindings = binding.computeJoinWith(intersectionOfSkippedBindings);			
-//		} else {
-//			intersectionOfSkippedBindings = INCOMPATIBLE_BINDING;
-//		}
-		
 		ISymbol<L, K> symbol = delegate.getAlphabet().getSymbolByLabel(symbolLabel);
 		if(shouldMonitor(symbol,binding,skippedSymbols)) {
 			if(!didMonitorLastEvent) reenableTime++;
-//			if(compatible)
 				processEvent(new AbstractionAndSymbol(abstraction(skippedSymbols), symbol), binding);
 			skippedSymbols.clear();
 			didMonitorLastEvent = true;
-//			intersectionOfSkippedBindings.clear(); //reset binding
 		} else {
 			if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
 			skippedSymbols.add(symbol);
@@ -346,13 +366,37 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	}
 	
 	/**
+	 * Returns the lenght of a sampling period for this monitor template. This size may actually depend on the 
+	 * size or structure of the delegate, i.e., the property to be monitored.
+	 */
+	abstract protected int samplingPeriod();
+
+	/**
+	 * This is the rate at which we sample, given as a number from 0 to 1.
+	 */
+	abstract protected double samplingRate();
+	
+	/**
+	 * Returns the set of critical symbols for the monitored property. Such symbols will always be monitored,
+	 * no matter whether or not sampling is enabled.
+	 */
+	abstract protected Set<ISymbol<L, K>> criticalSymbols();
+
+	/**
 	 * Determines whether the current event should be monitored.
 	 * @param symbol the current event's symbol
 	 * @param binding the current events's binding
 	 * @param skippedSymbols the multiset of symbols of events skipped so far
 	 * @return 
 	 */
-	protected abstract boolean shouldMonitor(ISymbol<L, K> symbol, IVariableBinding<K, V> binding, Multiset<ISymbol<L, K>> skippedSymbols);
+	protected boolean shouldMonitor(ISymbol<L, K> symbol, IVariableBinding<K, V> binding, Multiset<ISymbol<L, K>> skippedSymbols) {
+		if(phase==0) {
+			processEventsInCurrentPeriod = random.nextBoolean();
+		}
+		int periodLength = processEventsInCurrentPeriod ? samplingPeriod : skipPeriod;
+		phase = (phase+1) % periodLength;
+		return processEventsInCurrentPeriod || criticalSymbols.contains(symbol);
+	}
 
 	
 	public class AbstractionAndSymbol {

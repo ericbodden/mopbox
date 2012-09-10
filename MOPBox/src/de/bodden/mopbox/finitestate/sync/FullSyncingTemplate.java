@@ -10,7 +10,7 @@ import de.bodden.mopbox.generic.ISymbol;
  * of missed events.
  */
 public abstract class FullSyncingTemplate<L, K, V>
-	extends AbstractSyncingFSMMonitorTemplate<L, K, V, FullSyncingTemplate<L,K,V>.FullAbstraction>{
+	extends DefaultSyncingFSMMonitorTemplate<L, K, V, FullSyncingTemplate<L,K,V>.FullAbstraction>{
 		
 	public FullSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
 		super(delegate, max);

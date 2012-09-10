@@ -9,7 +9,7 @@ import de.bodden.mopbox.generic.ISymbol;
  * An {@link AbstractSyncingFSMMonitorTemplate} that models the gap of events missed as a multiset of missed events.
  */
 public abstract class MultisetSyncingTemplate<L, K, V>
-	extends AbstractSyncingFSMMonitorTemplate<L, K, V, MultisetSyncingTemplate<L,K,V>.AbstractionAsMultiset>{
+	extends DefaultSyncingFSMMonitorTemplate<L, K, V, MultisetSyncingTemplate<L,K,V>.AbstractionAsMultiset>{
 		
 	public MultisetSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
 		super(delegate, max);

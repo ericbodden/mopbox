@@ -11,7 +11,7 @@ import de.bodden.mopbox.generic.ISymbol;
  * An {@link AbstractSyncingFSMMonitorTemplate} that models the gap of events missed by the set of symbols that were missed.
  */
 public abstract class SymbolSetSyncingTemplate<L, K, V>
-	extends AbstractSyncingFSMMonitorTemplate<L, K, V, SymbolSetSyncingTemplate<L,K,V>.AbstractionBySymbolSet>{
+	extends DefaultSyncingFSMMonitorTemplate<L, K, V, SymbolSetSyncingTemplate<L,K,V>.AbstractionBySymbolSet>{
 		
 	public SymbolSetSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
 		super(delegate, max);
