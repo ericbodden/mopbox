@@ -59,7 +59,7 @@ public class SyncTests {
 	@Before
 	public void setUp() throws Exception {
 		fsiNormal = new FailSafeIterMonitorTemplate();
-		multisetSync = new MultisetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
+		multisetSync = new MultisetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate()) {
 			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
 				//only skip a single symbol
 				return skippedSymbols.size()>0;
@@ -68,7 +68,7 @@ public class SyncTests {
 				trace += binding.toString();				
 			}
 		};
-		numberSync = new NumberSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
+		numberSync = new NumberSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate()) {
 			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
 				//only skip a single symbol
 				return skippedSymbols.size()>0;

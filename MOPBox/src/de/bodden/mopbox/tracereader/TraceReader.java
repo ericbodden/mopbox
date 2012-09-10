@@ -48,7 +48,7 @@ public class TraceReader {
 		}
 
 		if(abstName.contentEquals("set")) {			
-			syncingTemplate = new SymbolSetSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+			syncingTemplate = new SymbolSetSyncingTemplate<String, String, Integer>(innerTemplate) {
 	
 				@Override
 				public void matchCompleted(IVariableBinding<String, Integer> binding) {
@@ -62,7 +62,7 @@ public class TraceReader {
 				}
 			};
 		} else if(abstName.contentEquals("num")) {			
-			syncingTemplate = new NumberSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+			syncingTemplate = new NumberSyncingTemplate<String, String, Integer>(innerTemplate) {
 	
 				@Override
 				public void matchCompleted(IVariableBinding<String, Integer> binding) {
@@ -76,7 +76,7 @@ public class TraceReader {
 				}
 			};
 		} else if(abstName.contentEquals("full")) {			
-			syncingTemplate = new FullSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+			syncingTemplate = new FullSyncingTemplate<String, String, Integer>(innerTemplate) {
 	
 				@Override
 				public void matchCompleted(IVariableBinding<String, Integer> binding) {
@@ -90,7 +90,7 @@ public class TraceReader {
 				}
 			};
 		} else if(abstName.contentEquals("multiset")) {			
-			syncingTemplate = new MultisetSyncingTemplate<String, String, Integer>(innerTemplate, 5) {
+			syncingTemplate = new MultisetSyncingTemplate<String, String, Integer>(innerTemplate) {
 	
 				@Override
 				public void matchCompleted(IVariableBinding<String, Integer> binding) {

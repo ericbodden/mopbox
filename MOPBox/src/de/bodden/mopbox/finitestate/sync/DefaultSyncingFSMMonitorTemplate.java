@@ -8,8 +8,8 @@ import de.bodden.mopbox.generic.ISymbol;
 
 public abstract class DefaultSyncingFSMMonitorTemplate<L, K, V, A extends AbstractSyncingFSMMonitorTemplate<L,K,V,A>.SymbolMultisetAbstraction> extends AbstractSyncingFSMMonitorTemplate<L, K, V, A> {
 
-	public DefaultSyncingFSMMonitorTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
-		super(delegate, max);
+	public DefaultSyncingFSMMonitorTemplate(OpenFSMMonitorTemplate<L, K, V> delegate) {
+		super(delegate, 5);
 	}
 
 	@Override

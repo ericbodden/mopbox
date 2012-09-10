@@ -74,7 +74,7 @@ public class SyncTests3 {
 	@Before
 	public void setUp() throws Exception {
 		fsiNormal = new FailSafeIterMonitorTemplate();
-		symbolSetSync = new SymbolSetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
+		symbolSetSync = new SymbolSetSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate()) {
 			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
 				return !shouldSkip();
 			}

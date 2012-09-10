@@ -12,8 +12,8 @@ import de.bodden.mopbox.generic.ISymbol;
 public abstract class FullSyncingTemplate<L, K, V>
 	extends DefaultSyncingFSMMonitorTemplate<L, K, V, FullSyncingTemplate<L,K,V>.FullAbstraction>{
 		
-	public FullSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
-		super(delegate, max);
+	public FullSyncingTemplate(OpenFSMMonitorTemplate<L, K, V> delegate) {
+		super(delegate);
 	}
 	
 	protected FullAbstraction abstraction(Multiset<ISymbol<L, K>> symbols) {

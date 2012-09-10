@@ -81,7 +81,7 @@ public class SyncTests2 {
 //				trace += binding.toString();				
 //			}
 //		};
-		fullSync = new FullSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate(),2) {
+		fullSync = new FullSyncingTemplate<String,Var,Object>(new FailSafeIterMonitorTemplate()) {
 			protected boolean shouldMonitor(ISymbol<String, Var> symbol,IVariableBinding<Var, Object> binding,Multiset<ISymbol<String, Var>> skippedSymbols) {
 				return !shouldSkip();
 			}
