@@ -220,7 +220,8 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 						//register the new state set so that we can later-on add it to the worklist
 						newStateSets.add(newTargets);						
 					}
-					//TODO comment
+					//expand abstraction for next iteration, but only process that one
+					//if it has not been processed already
 					A newAbstraction = abstraction.add(sym);
 					if(!visitedAbstractions.contains(newAbstraction)) {
 						worklistSyms.add(newAbstraction);
