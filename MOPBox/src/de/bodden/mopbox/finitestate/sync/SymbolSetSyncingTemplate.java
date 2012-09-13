@@ -1,5 +1,6 @@
 package de.bodden.mopbox.finitestate.sync;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.Multiset;
@@ -60,6 +61,13 @@ public abstract class SymbolSetSyncingTemplate<L, K, V>
 			} else if (!symbols.equals(other.symbols))
 				return false;
 			return true;
+		}
+
+		@Override
+		protected AbstractionBySymbolSet add(ISymbol<L, K> sym) {
+			HashSet<ISymbol<L, K>> copy = new HashSet<ISymbol<L, K>>(symbols);
+			copy.add(sym);
+			return new AbstractionBySymbolSet(copy);
 		}
 	}	
 }

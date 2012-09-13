@@ -1,5 +1,6 @@
 package de.bodden.mopbox.finitestate.sync;
 
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import de.bodden.mopbox.finitestate.OpenFSMMonitorTemplate;
@@ -62,6 +63,13 @@ public abstract class MultisetSyncingTemplate<L, K, V>
 			} else if (!symbols.equals(other.symbols))
 				return false;
 			return true;
+		}
+
+		@Override
+		protected AbstractionAsMultiset add(ISymbol<L, K> sym) {
+			Multiset<ISymbol<L, K>> copy = HashMultiset.create(symbols);
+			copy.add(sym);
+			return new AbstractionAsMultiset(copy);
 		}
 	}	
 }

@@ -176,23 +176,27 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			//have visited current set of states; to terminate, don't visit again
 			statesVisited.add(currentStates);
 
-			//create a work list for multisets of skipped symbols; starting with the empty multiset
-			Set<Multiset<ISymbol<L, K>>> worklistSyms = new HashSet<Multiset<ISymbol<L, K>>>();
-			worklistSyms.add(EMPTY); //add empty multiset
+			//create a work list for abstractions of multisets of skipped symbols;
+			//starting with the abstraction of the empty multiset
+			Set<A> worklistSyms = new HashSet<A>();
+			worklistSyms.add(abstraction(EMPTY)); //add empty multiset
 			
 			//this maps an abstraction of a gap info to all the states reachable through this gap
 			//info (and any symbol) 
 			Map<A,Set<State<L>>> abstractionToStates = new HashMap<A, Set<State<L>>>();
-			abstractionToStates.put(abstraction(EMPTY), currentStates);
+			A emptyAbstraction = abstraction(EMPTY);
+			abstractionToStates.put(emptyAbstraction, currentStates);
+			
+			Set<A> visitedAbstractions = new HashSet<A>();
 
 			while(!worklistSyms.isEmpty()) {
 				//pop entry off symbols worklist
-				Iterator<Multiset<ISymbol<L, K>>> symsIter = worklistSyms.iterator();
-				Multiset<ISymbol<L, K>> syms = symsIter.next();
+				Iterator<A> symsIter = worklistSyms.iterator();
+				A abstraction = symsIter.next();
+				visitedAbstractions.add(abstraction);
 				symsIter.remove();
 
 				//compute abstraction for symbols and the set of states reachable by the abstraction
-				A abstraction = abstraction(syms);
 				Set<State<L>> frontier = abstractionToStates.get(abstraction);
 				
 				//this set is used to register all newly computed successor state sets
@@ -216,12 +220,10 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 						//register the new state set so that we can later-on add it to the worklist
 						newStateSets.add(newTargets);						
 					}
-					//if we are still below MAX, add sym to the multiset, and add the current set of states
-					//to the set already associated with that multiset (if any) 
-					if(syms.size()<MAX) {
-						ImmutableMultiset<ISymbol<L, K>> newSyms = union(syms, sym);
-						worklistSyms.add(newSyms);
-						A newAbstraction = abstraction(newSyms);
+					//TODO comment
+					A newAbstraction = abstraction.add(sym);
+					if(!visitedAbstractions.contains(newAbstraction)) {
+						worklistSyms.add(newAbstraction);
 						Set<State<L>> old = abstractionToStates.get(newAbstraction);
 						if(old==null) {
 							old = new HashSet<State<L>>();
@@ -488,6 +490,8 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		public abstract int hashCode();
 
 		public abstract boolean equals(Object obj);		
+		
+		protected abstract A add(ISymbol<L, K> sym);
 	}
 
 }

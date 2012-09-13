@@ -57,6 +57,12 @@ public abstract class FullSyncingTemplate<L, K, V>
 			return true;
 		}
 
+		@Override
+		protected FullAbstraction add(ISymbol<L, K> sym) {
+			//something was added, so we certainly skipped *something*
+			return new FullAbstraction(true);
+		}
+
 	}
 		
 }
