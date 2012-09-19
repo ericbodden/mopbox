@@ -206,14 +206,15 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 					if(!symSuccs.isEmpty()) {						
 						boolean subsumed = transitionForSymbolAlreadyExists(currentStates,sym,symSuccs);
 						
-						//create label for new transition: (abstraction,sym)
-						ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
-						//register possible target states under that transition
-						Set<State<L>> newTargets = addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
-						//register the new state set so that we can later-on add it to the worklist
-						newStateSets.add(newTargets);
 						
 						if(!subsumed) {
+							//create label for new transition: (abstraction,sym)
+							ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
+							//register possible target states under that transition
+							Set<State<L>> newTargets = addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
+							//register the new state set so that we can later-on add it to the worklist
+							newStateSets.add(newTargets);
+							
 							A newAbstraction = abstraction.add(sym);
 							worklistSyms.add(newAbstraction);
 							Set<State<L>> old = abstractionToStates.get(newAbstraction);
