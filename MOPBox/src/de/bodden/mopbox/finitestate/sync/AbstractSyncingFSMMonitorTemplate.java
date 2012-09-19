@@ -204,7 +204,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 							symSuccs.add(succ);
 					}
 					if(!symSuccs.isEmpty()) {						
-						boolean subsumed = isSubsumedBySmallerAbstraction(currentStates,abstraction,sym,symSuccs);
+						boolean subsumed = transitionForSymbolAlreadyExists(currentStates,sym,symSuccs);
 						
 						//create label for new transition: (abstraction,sym)
 						ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
@@ -249,14 +249,16 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		return new DynamicAlphabet<AbstractSyncingFSMMonitorTemplate<L,K,V,A>.AbstractionAndSymbol, K>();
 	}
 	
-	private boolean isSubsumedBySmallerAbstraction(Set<State<L>> currentStates, A abstraction, ISymbol<L, K> symbol, Set<State<L>> symSuccs) {
+	private boolean transitionForSymbolAlreadyExists(Set<State<L>> currentStates, ISymbol<L, K> symbol, Set<State<L>> symSuccs) {
 		Map<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolToTargets = transitions.get(currentStates);
 		if(symbolToTargets==null) return false;
 		for(Map.Entry<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolAndTargets: symbolToTargets.entrySet()) {
-//			ISymbol<AbstractionAndSymbol, K> sym = symbolAndTargets.getKey();
-			Set<State<L>> targets = symbolAndTargets.getValue();
-			if(targets.equals(symSuccs)) { //TODO check that abstraction is actually smaller
-				return true;
+			ISymbol<AbstractionAndSymbol, K> sym = symbolAndTargets.getKey();
+			if(sym.getLabel().getSymbol().equals(symbol)) {
+				Set<State<L>> targets = symbolAndTargets.getValue();
+				if(targets.equals(symSuccs)) { 
+					return true;
+				}
 			}
 		}
 		return false;
