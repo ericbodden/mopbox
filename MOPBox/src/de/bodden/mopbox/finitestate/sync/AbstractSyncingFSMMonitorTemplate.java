@@ -12,7 +12,6 @@ import java.util.Set;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.ImmutableMultiset.Builder;
 import com.google.common.collect.Multiset;
 
 import de.bodden.mopbox.finitestate.DefaultFSMMonitor;
@@ -22,6 +21,7 @@ import de.bodden.mopbox.generic.IAlphabet;
 import de.bodden.mopbox.generic.IIndexingStrategy;
 import de.bodden.mopbox.generic.ISymbol;
 import de.bodden.mopbox.generic.IVariableBinding;
+import de.bodden.mopbox.generic.def.DynamicAlphabet;
 import de.bodden.mopbox.generic.def.VariableBinding;
 import de.bodden.mopbox.generic.indexing.simple.StrategyB;
 
@@ -76,11 +76,6 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 */
 	protected final Map<Set<State<L>>,Map<ISymbol<AbstractionAndSymbol, K>,Set<State<L>>>> transitions =
 		new HashMap<Set<State<L>>, Map<ISymbol<AbstractionAndSymbol,K>,Set<State<L>>>>();
-
-	/**
-	 * The maximal number of skipped events.
-	 */
-	protected final int MAX;
 	
 	/**
 	 * The multiset of skipped events.
@@ -140,9 +135,8 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	 * @param delegate The monitor template this syncing monitor template is based on. The template will remain unmodified.
 	 * @param max The maximal number of skipped events.
 	 */
-	public AbstractSyncingFSMMonitorTemplate(OpenFSMMonitorTemplate<L, K, V> delegate, int max) {
+	public AbstractSyncingFSMMonitorTemplate(OpenFSMMonitorTemplate<L, K, V> delegate) {
 		this.delegate = delegate;
-		this.MAX = max;
 		initialize();
 		this.samplingPeriod = samplingPeriod();
 		this.skipPeriod = (int) (1.0d/samplingRate() - 1) * samplingPeriod; 
@@ -187,13 +181,10 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			A emptyAbstraction = abstraction(EMPTY);
 			abstractionToStates.put(emptyAbstraction, currentStates);
 			
-			Set<A> visitedAbstractions = new HashSet<A>();
-
 			while(!worklistSyms.isEmpty()) {
 				//pop entry off symbols worklist
 				Iterator<A> symsIter = worklistSyms.iterator();
 				A abstraction = symsIter.next();
-				visitedAbstractions.add(abstraction);
 				symsIter.remove();
 
 				//compute abstraction for symbols and the set of states reachable by the abstraction
@@ -212,28 +203,29 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 						if(succ!=null)
 							symSuccs.add(succ);
 					}
-					if(!symSuccs.isEmpty()) {
+					if(!symSuccs.isEmpty()) {						
+						boolean subsumed = isSubsumedBySmallerAbstraction(currentStates,abstraction,sym,symSuccs);
+						
 						//create label for new transition: (abstraction,sym)
 						ISymbol<AbstractionAndSymbol, K> compoundSymbol = getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym));
 						//register possible target states under that transition
 						Set<State<L>> newTargets = addTargetStatesToTransition(currentStates, compoundSymbol, symSuccs);
 						//register the new state set so that we can later-on add it to the worklist
-						newStateSets.add(newTargets);						
-					}
-					//expand abstraction for next iteration, but only process that one
-					//if it has not been processed already
-					A newAbstraction = abstraction.add(sym);
-					if(!visitedAbstractions.contains(newAbstraction)) {
-						worklistSyms.add(newAbstraction);
-						Set<State<L>> old = abstractionToStates.get(newAbstraction);
-						if(old==null) {
-							old = new HashSet<State<L>>();
-							abstractionToStates.put(newAbstraction, old);
-						} 
-						old.addAll(symSuccs);
-						//for abstracted events we do not know whether they happened on the same object
-						//or not; hence we could also have stayed in the same set of states
-						old.addAll(frontier);
+						newStateSets.add(newTargets);
+						
+						if(!subsumed) {
+							A newAbstraction = abstraction.add(sym);
+							worklistSyms.add(newAbstraction);
+							Set<State<L>> old = abstractionToStates.get(newAbstraction);
+							if(old==null) {
+								old = new HashSet<State<L>>();
+								abstractionToStates.put(newAbstraction, old);
+							} 
+							old.addAll(symSuccs);
+							//for abstracted events we do not know whether they happened on the same object
+							//or not; hence we could also have stayed in the same set of states
+							old.addAll(frontier);
+						}
 					}
 				}
 				
@@ -252,6 +244,25 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		return stateFor(Collections.singleton(delegate.getInitialState()));
 	}
 	
+	protected IAlphabet<AbstractSyncingFSMMonitorTemplate<L,K,V,A>.AbstractionAndSymbol,K> createAlphabet() {
+		super.createAlphabet();
+		return new DynamicAlphabet<AbstractSyncingFSMMonitorTemplate<L,K,V,A>.AbstractionAndSymbol, K>();
+	}
+	
+	private boolean isSubsumedBySmallerAbstraction(Set<State<L>> currentStates, A abstraction, ISymbol<L, K> symbol, Set<State<L>> symSuccs) {
+		Map<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolToTargets = transitions.get(currentStates);
+		if(symbolToTargets==null) return false;
+		for(Map.Entry<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolAndTargets: symbolToTargets.entrySet()) {
+//			ISymbol<AbstractionAndSymbol, K> sym = symbolAndTargets.getKey();
+			Set<State<L>> targets = symbolAndTargets.getValue();
+			if(targets.equals(symSuccs)) { //TODO check that abstraction is actually smaller
+				return true;
+			}
+		}
+		return false;
+	}
+		
+
 	protected Set<State<L>> addTargetStatesToTransition(Set<State<L>> currentStates, ISymbol<AbstractionAndSymbol,K> symbol, Set<State<L>> someTargetStates) {
 		Map<ISymbol<AbstractionAndSymbol, K>, Set<State<L>>> symbolToTargets = transitions.get(currentStates);
 		if(symbolToTargets==null) {
@@ -277,15 +288,6 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			}			
 		}
 		transitions.clear(); //free space
-	}
-
-	private ImmutableMultiset<ISymbol<L, K>> union(
-			Multiset<ISymbol<L, K>> syms, ISymbol<L, K> sym) {
-		Builder<ISymbol<L,K>> builder = ImmutableMultiset.<ISymbol<L,K>>builder();
-		builder.addAll(syms);
-		builder.add(sym);
-		ImmutableMultiset<ISymbol<L, K>> newMultiSet = builder.build();
-		return newMultiSet;
 	}
 
 	protected abstract A abstraction(Multiset<ISymbol<L, K>> symbols);
@@ -320,31 +322,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 
 	@Override
 	protected void fillAlphabet(IAlphabet<AbstractionAndSymbol, K> alphabet) {
-		Set<Multiset<ISymbol<L, K>>> worklistSyms = new HashSet<Multiset<ISymbol<L, K>>>();
-		final ImmutableMultiset<ISymbol<L, K>> EMPTY = ImmutableMultiset.<ISymbol<L,K>>of();
-		worklistSyms.add(EMPTY); //add empty multiset
-		
-		while(!worklistSyms.isEmpty()) {
-			//pop entry off symbols worklist
-			Iterator<Multiset<ISymbol<L, K>>> symsIter = worklistSyms.iterator();
-			Multiset<ISymbol<L, K>> syms = symsIter.next();
-			symsIter.remove();
-
-			A abstraction = abstraction(syms);
-
-			for (ISymbol<L,K> sym : delegate.getAlphabet()) {				
-				alphabet.makeNewSymbol(
-						new AbstractionAndSymbol(abstraction, sym),
-						//a compound symbol only binds the variables that the
-						//symbol at the current point of monitoring binds
-						sym.getVariables() 
-				);
-				if(syms.size()<MAX) {
-					ImmutableMultiset<ISymbol<L, K>> newSyms = union(syms, sym);
-					worklistSyms.add(newSyms);
-				}
-			}
-		}
+		//alphabet is instead filled on demand
 	}
 	
 	/**
@@ -362,7 +340,6 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			skippedSymbols.clear();
 			didMonitorLastEvent = true;
 		} else {
-			if(skippedSymbols.size()>MAX) throw new InternalError("MAX is "+MAX+" but skipped "+skippedSymbols.size()+" events!");
 			skippedSymbols.add(symbol);
 			didMonitorLastEvent = false;
 		}
