@@ -75,5 +75,10 @@ public abstract class NumberAndSymbolSetSyncingTemplate<L, K, V>
 			copy.add(sym);
 			return new AbstractionBySizeAndSymbols(size+1, copy);
 		}
+
+		@Override
+		protected boolean isSmallerOrEqualThan(AbstractionBySizeAndSymbols other) {
+			return other.symbols.containsAll(symbols) && other.size>=size;
+		}
 	}	
 }

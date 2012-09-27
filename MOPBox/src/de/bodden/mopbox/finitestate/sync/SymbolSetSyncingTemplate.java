@@ -69,5 +69,10 @@ public abstract class SymbolSetSyncingTemplate<L, K, V>
 			copy.add(sym);
 			return new AbstractionBySymbolSet(copy);
 		}
+
+		@Override
+		protected boolean isSmallerOrEqualThan(AbstractionBySymbolSet other) {
+			return other.symbols.containsAll(symbols);
+		}
 	}	
 }

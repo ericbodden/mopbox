@@ -71,5 +71,9 @@ public abstract class MultisetSyncingTemplate<L, K, V>
 			copy.add(sym);
 			return new AbstractionAsMultiset(copy);
 		}
+
+		protected boolean isSmallerOrEqualThan(AbstractionAsMultiset other) {
+			return other.symbols.containsAll(symbols);
+		}
 	}	
 }

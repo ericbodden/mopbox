@@ -61,6 +61,11 @@ public abstract class NumberSyncingTemplate<L, K, V>
 		protected AbstractionBySize add(ISymbol<L, K> sym) {
 			return new AbstractionBySize(size+1);
 		}
+
+		@Override
+		protected boolean isSmallerOrEqualThan(AbstractionBySize other) {
+			return other.size>=size;
+		}
 		
 	}
 		

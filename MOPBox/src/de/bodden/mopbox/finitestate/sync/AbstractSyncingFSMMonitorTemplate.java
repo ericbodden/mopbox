@@ -442,6 +442,40 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 	public IVariableBinding<K, V> createEmptyBinding() {
 		return delegate.createEmptyBinding();
 	}
+	
+	@Override
+	protected State<AbstractionAndSymbol> makeState(boolean isFinal) {
+		return new SyncState(getAlphabet(),isFinal,Integer.toString(nextStateNum++));
+	}
+	
+	public class SyncState extends State<AbstractionAndSymbol> {
+		
+		Map<ISymbol<L, K>,A> symToMaxAbstraction = new HashMap<ISymbol<L, K>,A>();
+		Map<ISymbol<L, K>,ISymbol<AbstractionAndSymbol, ?>> symToMaxSymbol = new HashMap<ISymbol<L, K>,ISymbol<AbstractionAndSymbol, ?>>();
+
+		public SyncState(IAlphabet<AbstractionAndSymbol, ?> alphabet, boolean isFinal, String label) {
+			super(alphabet, isFinal, label);
+		}
+		
+		@Override
+		public State<AbstractionAndSymbol> successor(ISymbol<AbstractionAndSymbol, ?> sym) {
+			A max = symToMaxAbstraction.get(sym.getLabel().getSymbol());
+			if(max!=null && max.isSmallerOrEqualThan(sym.getLabel().getAbstraction())) {
+				sym = symToMaxSymbol.get(sym.getLabel().getSymbol());
+			}
+			return super.successor(sym);
+		}
+		
+		@Override
+		public void addTransition(ISymbol<AbstractionAndSymbol, ?> sym, State<AbstractionAndSymbol> succ) {
+			super.addTransition(sym, succ);
+			A abstraction = sym.getLabel().getAbstraction();
+			ISymbol<L, K> symbol = sym.getLabel().getSymbol();
+			symToMaxAbstraction.put(symbol,abstraction);
+			symToMaxSymbol.put(symbol,getAlphabet().getSymbolByLabel(new AbstractionAndSymbol(abstraction, sym.getLabel().getSymbol())));
+		}
+		
+	}
 
 	public class SyncFSMMonitor extends DefaultFSMMonitor<AbstractionAndSymbol> {
 
@@ -462,7 +496,7 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 			} else {
 				lastAccess = reenableTime;
 			}
-			
+						
 			return super.processEvent(s);
 		}
 	}
@@ -473,6 +507,8 @@ public abstract class AbstractSyncingFSMMonitorTemplate<L, K, V, A extends Abstr
 		public abstract boolean equals(Object obj);		
 		
 		protected abstract A add(ISymbol<L, K> sym);
+		
+		protected abstract boolean isSmallerOrEqualThan(A other);
 	}
 
 }

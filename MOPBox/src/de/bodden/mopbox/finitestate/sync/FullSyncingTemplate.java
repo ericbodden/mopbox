@@ -63,6 +63,11 @@ public abstract class FullSyncingTemplate<L, K, V>
 			return new FullAbstraction(true);
 		}
 
+		@Override
+		protected boolean isSmallerOrEqualThan(FullAbstraction other) {
+			return !skippedSomething;
+		}
+
 	}
 		
 }

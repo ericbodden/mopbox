@@ -20,8 +20,8 @@ import de.bodden.mopbox.generic.indexing.simple.StrategyB;
  */
 public abstract class AbstractFSMMonitorTemplate<L,K,V> extends AbstractMonitorTemplate<DefaultFSMMonitor<L>,L,K,V> {
 
-	private int nextStateNum = 0;
-	private State<L> initialState;	
+	protected int nextStateNum = 0;
+	protected State<L> initialState;	
 
 	protected State<L> makeState(boolean isFinal) {
 		return new State<L>(getAlphabet(),isFinal,Integer.toString(nextStateNum++));
