@@ -11,7 +11,7 @@ As an enabler for novel, more flexible runtime verification algorithms. For inst
 MOPBox is open source. Feel free to use it and extend it however you wish. Of course, we are also always interested in collaborations on this topic.
 
 Examples
-See **here** for a list of toy examples.
+See [here](https://github.com/ericbodden/mopbox/wiki) for a list of toy examples.
 
 Download and testing
 Although already quite stable, MOPBox has not yet been released. To download the current code, please access the source code from our repository. The repository also includes test cases that show how to define and use runtime monitors. In case of any questions, do not hesitate to [contact me](http://www.bodden.de/about-me/).
